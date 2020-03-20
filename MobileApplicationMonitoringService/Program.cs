@@ -25,6 +25,6 @@ namespace MobileApplicationMonitoringService
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                }).UseSerilog();
     }
 }

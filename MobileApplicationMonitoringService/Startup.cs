@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MobileApplicationMonitoringService.Application.Repositories;
 using Serilog;
 
 namespace MobileApplicationMonitoringService
@@ -26,6 +27,7 @@ namespace MobileApplicationMonitoringService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddScoped<IIdentificationDataRepository, IdentificationDataRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -34,7 +36,6 @@ namespace MobileApplicationMonitoringService
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
             app.UseRouting();
