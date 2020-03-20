@@ -16,7 +16,6 @@ namespace MobileApplicationMonitoringService
             var logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
-            logger.Information("start");
             CreateHostBuilder(args).Build().Run();
         }
 

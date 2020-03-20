@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MobileApplicationMonitoringService.Application.Repositories;
 using Serilog;
+using ILogger = Serilog.ILogger;
 
 namespace MobileApplicationMonitoringService
 {
@@ -27,6 +29,7 @@ namespace MobileApplicationMonitoringService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddSingleton<ILogger>(Log.Logger);
             services.AddScoped<IIdentificationDataRepository, IdentificationDataRepository>();
         }
 
@@ -42,7 +45,11 @@ namespace MobileApplicationMonitoringService
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapGet("/", context => context.Response.WriteAsync("Hello world"));
+
+                endpoints.MapControllerRoute(name:null,
+                    pattern: "{controller=Main}/{action=Get}/{id?}"
+                );
             });
         }
     }

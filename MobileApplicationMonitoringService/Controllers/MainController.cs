@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using MobileApplicationMonitoringService.Application.Models;
 using MobileApplicationMonitoringService.Application.Repositories;
 using Serilog;
+using Serilog.Events;
 
 namespace MobileApplicationMonitoringService.Controllers
 {
@@ -13,7 +15,7 @@ namespace MobileApplicationMonitoringService.Controllers
     [ApiController]
     public class MainController:Controller
     {
-        private ILogger logger;
+        private readonly ILogger logger;
         private readonly IIdentificationDataRepository repository;
 
         public MainController(ILogger logger, IIdentificationDataRepository repository)
@@ -25,29 +27,35 @@ namespace MobileApplicationMonitoringService.Controllers
         [HttpGet]
         public IEnumerable<IdentificationData> Get()
         {
+            logger.Debug("There was a request to receive all data");
             return repository.DataRepository;
         }
 
         [HttpGet("Id")]
         public IdentificationData Get(long id)
         {
-            return repository.DataRepository.First(x => x.Id == id);
+            var item = repository.DataRepository.FirstOrDefault(x => x.Id == id);
+            logger.Debug("A request for data about " + item?.ToString());
+            return item;
         }
 
         [HttpPost]
         public void Post(IdentificationData data)
         {
+            logger.Debug("A request to create data about" + data.ToString());
             repository.Create(data);
         }
         [HttpPut]
         public void Put(IdentificationData data)
         {
+            logger.Debug("A request to update data about" + data.ToString());
             repository.Update(data);
         }
 
         [HttpDelete]
         public void Delete(IdentificationData data)
         {
+            logger.Debug("A request to delete data about" + data.ToString());
             repository.Delete(data);
         }
     }
