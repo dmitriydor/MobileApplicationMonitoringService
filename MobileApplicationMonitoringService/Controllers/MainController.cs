@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using MobileApplicationMonitoringService.Application.Models;
 using MobileApplicationMonitoringService.Application.Repositories;
+using MobileApplicationMonitoringService.Contracts;
 using Serilog;
 using Serilog.Events;
 
@@ -24,14 +25,14 @@ namespace MobileApplicationMonitoringService.Controllers
             this.repository = repository;
         }
 
-        [HttpGet]
+        [HttpGet(ApiRoutes.IdentificationData.GetAll)]
         public IEnumerable<IdentificationData> Get()
         {
             logger.Debug("There was a request to receive all data");
             return repository.GetAll().Values;
         }
 
-        [HttpGet("Id", Name = "GetUserData")]
+        [HttpGet(ApiRoutes.IdentificationData.Get)]
         public IActionResult Get(Guid id)
         {
             var identificationData = repository.GetById(id);
@@ -40,7 +41,7 @@ namespace MobileApplicationMonitoringService.Controllers
             return Ok(identificationData);
         }
 
-        [HttpPost]
+        [HttpPost(ApiRoutes.IdentificationData.Create)]
         public IActionResult Post([FromBody] IdentificationData data)
         {
             if (data == null)
@@ -52,7 +53,7 @@ namespace MobileApplicationMonitoringService.Controllers
             return Ok(identificationData);
 
         }
-        [HttpPut("{id}")]
+        [HttpPut(ApiRoutes.IdentificationData.Update)]
         public IActionResult Put(Guid id, [FromBody] IdentificationData data)
         {
             if (data == null)
@@ -70,7 +71,7 @@ namespace MobileApplicationMonitoringService.Controllers
             return Ok(data);
         }
 
-        [HttpDelete]
+        [HttpDelete(ApiRoutes.IdentificationData.Delete)]
         public void Delete(Guid id)
         {
             var identificationData = repository.GetById(id);
