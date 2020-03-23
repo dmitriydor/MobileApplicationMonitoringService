@@ -9,8 +9,8 @@ namespace MobileApplicationMonitoringService.Application.Repositories
     public interface IIdentificationDataRepository
     {
         public IEnumerable<IdentificationData> DataRepository { get;}
-        public void Create(IdentificationData data);
-        public void Update(IdentificationData data);
+        public IdentificationData Create(IdentificationData data);
+        public IdentificationData Update(IdentificationData data);
         public void Delete(IdentificationData data);
     }
 }

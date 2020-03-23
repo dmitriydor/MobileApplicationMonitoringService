@@ -30,7 +30,7 @@ namespace MobileApplicationMonitoringService
         {
             services.AddControllers();
             services.AddSingleton<ILogger>(Log.Logger);
-            services.AddScoped<IIdentificationDataRepository, IdentificationDataRepository>();
+            services.AddSingleton<IIdentificationDataRepository, FakeRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -45,11 +45,7 @@ namespace MobileApplicationMonitoringService
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", context => context.Response.WriteAsync("Hello world"));
-
-                endpoints.MapControllerRoute(name:null,
-                    pattern: "{controller=Main}/{action=Get}/{id?}"
-                );
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }

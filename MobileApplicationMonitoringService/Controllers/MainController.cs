@@ -40,16 +40,16 @@ namespace MobileApplicationMonitoringService.Controllers
         }
 
         [HttpPost]
-        public void Post(IdentificationData data)
+        public IdentificationData Post([FromBody] IdentificationData data)
         {
             logger.Debug("A request to create data about" + data.ToString());
-            repository.Create(data);
+            return repository.Create(data);
         }
         [HttpPut]
-        public void Put(IdentificationData data)
+        public IdentificationData Put([FromBody] IdentificationData data)
         {
             logger.Debug("A request to update data about" + data.ToString());
-            repository.Update(data);
+            return repository.Update(data);
         }
 
         [HttpDelete]

@@ -8,24 +8,20 @@ namespace MobileApplicationMonitoringService.Application.Repositories
 {
     public class IdentificationDataRepository:IIdentificationDataRepository
     {
-        private List<IdentificationData> dataRepository = new List<IdentificationData>();
-        public IEnumerable<IdentificationData> DataRepository 
-        {
-            get
-            {
-                return dataRepository;
-            }
-        }
+        private readonly List<IdentificationData> dataRepository = new List<IdentificationData>();
+        public IEnumerable<IdentificationData> DataRepository => dataRepository;
 
-        public void Create(IdentificationData data)
+        public IdentificationData Create(IdentificationData data)
         {
             dataRepository.Add(data);
+            return data;
         }
 
-        public void Update(IdentificationData data)
+        public IdentificationData Update(IdentificationData data)
         {
             var index = dataRepository.FindIndex(x => x == data);
             dataRepository[index] = data;
+            return data;
         }
 
         public void Delete(IdentificationData data)
