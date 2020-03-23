@@ -8,25 +8,40 @@ namespace MobileApplicationMonitoringService.Application.Repositories
 {
     public class IdentificationDataRepository:IIdentificationDataRepository
     {
-        private readonly List<IdentificationData> dataRepository = new List<IdentificationData>();
-        public IEnumerable<IdentificationData> DataRepository => dataRepository;
+        private readonly Dictionary<Guid,IdentificationData> dataRepository = new Dictionary<Guid, IdentificationData>();
 
+        public Dictionary<Guid,IdentificationData> GetAll()
+        {
+            var clone = new Dictionary<Guid, IdentificationData>();
+            foreach (KeyValuePair<Guid, IdentificationData> identificationData in clone)
+            {
+                clone.Add(identificationData.Key,identificationData.Value);
+            }
+
+            return clone;
+        }
+
+        public IdentificationData GetById(Guid id)
+        {
+            return dataRepository[id];
+        }
         public IdentificationData Create(IdentificationData data)
         {
-            dataRepository.Add(data);
+            var id = Guid.NewGuid();
+            data.Id = id;
+            dataRepository.Add(id,data);
             return data;
         }
 
-        public IdentificationData Update(IdentificationData data)
+        public IdentificationData Update(Guid id,IdentificationData data)
         {
-            var index = dataRepository.FindIndex(x => x == data);
-            dataRepository[index] = data;
+            dataRepository[id] = data;
             return data;
         }
 
-        public void Delete(IdentificationData data)
+        public void Delete(Guid id)
         {
-            dataRepository.Remove(data);
+            dataRepository.Remove(id);
         }
     }
 }

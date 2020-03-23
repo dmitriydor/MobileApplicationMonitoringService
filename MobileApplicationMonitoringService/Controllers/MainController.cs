@@ -28,35 +28,54 @@ namespace MobileApplicationMonitoringService.Controllers
         public IEnumerable<IdentificationData> Get()
         {
             logger.Debug("There was a request to receive all data");
-            return repository.DataRepository;
+            return repository.GetAll().Values;
         }
 
-        [HttpGet("Id")]
-        public IdentificationData Get(long id)
+        [HttpGet("Id", Name = "GetUserData")]
+        public IActionResult Get(Guid id)
         {
-            var item = repository.DataRepository.FirstOrDefault(x => x.Id == id);
-            logger.Debug("A request for data about " + item?.ToString());
-            return item;
+            var identificationData = repository.GetById(id);
+            //TODO: NotFound case
+            logger.Debug($"A request for data about {identificationData?.ToString()}");
+            return Ok(identificationData);
         }
 
         [HttpPost]
-        public IdentificationData Post([FromBody] IdentificationData data)
+        public IActionResult Post([FromBody] IdentificationData data)
         {
-            logger.Debug("A request to create data about" + data.ToString());
-            return repository.Create(data);
+            if (data == null)
+            {
+                return BadRequest("Data object is null");
+            }
+            logger.Debug($"A request to create data about {data.ToString()}");
+            var identificationData = repository.Create(data);
+            return Ok(identificationData);
+
         }
-        [HttpPut]
-        public IdentificationData Put([FromBody] IdentificationData data)
+        [HttpPut("{id}")]
+        public IActionResult Put(Guid id, [FromBody] IdentificationData data)
         {
-            logger.Debug("A request to update data about" + data.ToString());
-            return repository.Update(data);
+            if (data == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid model object");
+            }
+
+            repository.Update(id, data);
+            logger.Debug($"A request to update data about {data.ToString()}");
+            return Ok(data);
         }
 
         [HttpDelete]
-        public void Delete(IdentificationData data)
+        public void Delete(Guid id)
         {
-            logger.Debug("A request to delete data about" + data.ToString());
-            repository.Delete(data);
+            var identificationData = repository.GetById(id);
+            logger.Debug($"A request to delete data about {identificationData.ToString()}");
+            repository.Delete(id);
         }
     }
 }

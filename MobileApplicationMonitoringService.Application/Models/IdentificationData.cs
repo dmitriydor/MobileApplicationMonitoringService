@@ -4,15 +4,15 @@ using System.Text;
 
 namespace MobileApplicationMonitoringService.Application.Models
 {
-    public class IdentificationData
+    public sealed class IdentificationData
     {
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         public string UserName { get; set; }
-        public string OS { get; set; }
+        public string OperationSystem { get; set; }
         public string AppVersion { get; set; }
         public override string ToString()
         {
-            return $"Id:{Id}, Username:{UserName}, Operation System:{OS}, Application Version:{AppVersion}";
+            return $"Id:{Id}, Username:{UserName}, Operation System:{OperationSystem}, Application Version:{AppVersion}";
         }
     }
 }
