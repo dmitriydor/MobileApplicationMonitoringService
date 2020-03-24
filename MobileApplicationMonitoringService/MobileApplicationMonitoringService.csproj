@@ -9,10 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Contracts\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MobileApplicationMonitoringService.Application\MobileApplicationMonitoringService.Application.csproj" />
   </ItemGroup>
 

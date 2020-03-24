@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using MobileApplicationMonitoringService.Application.Models;
 using MobileApplicationMonitoringService.Application.Repositories;
 using MobileApplicationMonitoringService.Contracts;
+using MobileApplicationMonitoringService.Contracts.Requests;
+using MobileApplicationMonitoringService.Contracts.Responses;
 using Serilog;
-using Serilog.Events;
 
 namespace MobileApplicationMonitoringService.Controllers
 {
-    [Route("[controller]")]
     [ApiController]
     public class MainController:Controller
     {
@@ -33,32 +30,58 @@ namespace MobileApplicationMonitoringService.Controllers
         }
 
         [HttpGet(ApiRoutes.IdentificationData.Get)]
-        public IActionResult Get(Guid id)
+        public IActionResult Get([FromRoute] Guid id)
         {
             var identificationData = repository.GetById(id);
-            //TODO: NotFound case
+            if (identificationData == null)
+            {
+                return NotFound();
+            }
             logger.Debug($"A request for data about {identificationData?.ToString()}");
             return Ok(identificationData);
         }
 
         [HttpPost(ApiRoutes.IdentificationData.Create)]
-        public IActionResult Post([FromBody] IdentificationData data)
+        public IActionResult Post([FromBody] CreateIdentificationDataRequest createData)
+        {
+            if (createData == null)
+            {
+                return BadRequest("Data object is null");
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid model object");
+            }
+
+            var identificationData = new IdentificationData
+            {
+                UserName = createData.UserName,
+                AppVersion = createData.AppVersion,
+                OperationSystem = createData.OperationSystem
+            };
+            var data = repository.Create(identificationData);
+            logger.Debug($"A request to create data about {data.ToString()}");
+
+            var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
+            var locationUri = baseUrl + "/" + ApiRoutes.IdentificationData.Get.Replace("{id:Guid}", data.Id.ToString());
+            var response = new IdentificationDataResponse
+            {
+                Id = data.Id,
+                AppVersion = data.AppVersion,
+                OperationSystem = data.OperationSystem,
+                UserName = data.UserName
+            };
+
+
+            return Created(locationUri, response);
+
+        }
+        [HttpPut(ApiRoutes.IdentificationData.Update)]
+        public IActionResult Put([FromRoute]Guid id, [FromBody] IdentificationData data)
         {
             if (data == null)
             {
                 return BadRequest("Data object is null");
-            }
-            logger.Debug($"A request to create data about {data.ToString()}");
-            var identificationData = repository.Create(data);
-            return Ok(identificationData);
-
-        }
-        [HttpPut(ApiRoutes.IdentificationData.Update)]
-        public IActionResult Put(Guid id, [FromBody] IdentificationData data)
-        {
-            if (data == null)
-            {
-                return BadRequest();
             }
 
             if (!ModelState.IsValid)
@@ -66,17 +89,26 @@ namespace MobileApplicationMonitoringService.Controllers
                 return BadRequest("Invalid model object");
             }
 
-            repository.Update(id, data);
-            logger.Debug($"A request to update data about {data.ToString()}");
-            return Ok(data);
+            var identificationData = repository.Update(id, data);
+            if (identificationData == null)
+            {
+                return NotFound();
+            }
+            logger.Debug($"A request to update data about {identificationData.ToString()}");
+            return Ok(identificationData);
         }
 
         [HttpDelete(ApiRoutes.IdentificationData.Delete)]
-        public void Delete(Guid id)
+        public IActionResult Delete([FromRoute] Guid id)
         {
             var identificationData = repository.GetById(id);
+            if (identificationData == null)
+            {
+                return NotFound();
+            }
             logger.Debug($"A request to delete data about {identificationData.ToString()}");
             repository.Delete(id);
+            return Ok();
         }
     }
 }

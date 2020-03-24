@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using MobileApplicationMonitoringService.Application.Models;
@@ -23,6 +24,11 @@ namespace MobileApplicationMonitoringService.Application.Repositories
 
         public IdentificationData GetById(Guid id)
         {
+            if (!dataRepository.ContainsKey(id))
+            {
+                return null;
+            }
+
             return dataRepository[id];
         }
         public IdentificationData Create(IdentificationData data)
@@ -35,8 +41,12 @@ namespace MobileApplicationMonitoringService.Application.Repositories
 
         public IdentificationData Update(Guid id,IdentificationData data)
         {
+            if (!dataRepository.ContainsKey(id))
+            {
+                return null;
+            }
             dataRepository[id] = data;
-            return data;
+            return dataRepository[id];
         }
 
         public void Delete(Guid id)
