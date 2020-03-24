@@ -39,14 +39,14 @@ namespace MobileApplicationMonitoringService.Application.Repositories
             return data;
         }
 
-        public IdentificationData Update(Guid id,IdentificationData data)
+        public IdentificationData Update(IdentificationData data)
         {
-            if (!dataRepository.ContainsKey(id))
+            if (!dataRepository.ContainsKey(data.Id))
             {
                 return null;
             }
-            dataRepository[id] = data;
-            return dataRepository[id];
+            dataRepository[data.Id] = data;
+            return dataRepository[data.Id];
         }
 
         public void Delete(Guid id)

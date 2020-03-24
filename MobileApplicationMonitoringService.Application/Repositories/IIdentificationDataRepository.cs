@@ -12,7 +12,7 @@ namespace MobileApplicationMonitoringService.Application.Repositories
         public Dictionary<Guid, IdentificationData> GetAll();
         public IdentificationData GetById(Guid id);
         public IdentificationData Create(IdentificationData data);
-        public IdentificationData Update(Guid id,IdentificationData data);
+        public IdentificationData Update(IdentificationData data);
         public void Delete(Guid id);
     }
 }

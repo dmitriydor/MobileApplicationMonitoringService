@@ -42,9 +42,9 @@ namespace MobileApplicationMonitoringService.Controllers
         }
 
         [HttpPost(ApiRoutes.IdentificationData.Create)]
-        public IActionResult Post([FromBody] CreateIdentificationDataRequest createData)
+        public IActionResult Post([FromBody] CreateIdentificationDataRequest requestData)
         {
-            if (createData == null)
+            if (requestData == null)
             {
                 return BadRequest("Data object is null");
             }
@@ -55,21 +55,21 @@ namespace MobileApplicationMonitoringService.Controllers
 
             var identificationData = new IdentificationData
             {
-                UserName = createData.UserName,
-                AppVersion = createData.AppVersion,
-                OperationSystem = createData.OperationSystem
+                UserName = requestData.UserName,
+                AppVersion = requestData.AppVersion,
+                OperationSystem = requestData.OperationSystem
             };
-            var data = repository.Create(identificationData);
-            logger.Debug($"A request to create data about {data.ToString()}");
+            var createdData = repository.Create(identificationData);
+            logger.Debug($"A request to create data about {createdData.ToString()}");
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
-            var locationUri = baseUrl + "/" + ApiRoutes.IdentificationData.Get.Replace("{id:Guid}", data.Id.ToString());
+            var locationUri = baseUrl + "/" + ApiRoutes.IdentificationData.Get.Replace("{id:Guid}", createdData.Id.ToString());
             var response = new IdentificationDataResponse
             {
-                Id = data.Id,
-                AppVersion = data.AppVersion,
-                OperationSystem = data.OperationSystem,
-                UserName = data.UserName
+                Id = createdData.Id,
+                AppVersion = createdData.AppVersion,
+                OperationSystem = createdData.OperationSystem,
+                UserName = createdData.UserName
             };
 
 
@@ -77,9 +77,9 @@ namespace MobileApplicationMonitoringService.Controllers
 
         }
         [HttpPut(ApiRoutes.IdentificationData.Update)]
-        public IActionResult Put([FromRoute]Guid id, [FromBody] IdentificationData data)
+        public IActionResult Put([FromRoute]Guid id, [FromBody] UpdateIdentificationDataRequest requestData)
         {
-            if (data == null)
+            if (requestData == null)
             {
                 return BadRequest("Data object is null");
             }
@@ -89,13 +89,18 @@ namespace MobileApplicationMonitoringService.Controllers
                 return BadRequest("Invalid model object");
             }
 
-            var identificationData = repository.Update(id, data);
+            var identificationData = repository.GetById(id);
             if (identificationData == null)
             {
                 return NotFound();
             }
-            logger.Debug($"A request to update data about {identificationData.ToString()}");
-            return Ok(identificationData);
+            identificationData.AppVersion = requestData.AppVersion;
+            identificationData.OperationSystem = requestData.OperationSystem;
+            identificationData.UserName = requestData.UserName;
+            var updatedData = repository.Update(identificationData);
+            
+            logger.Debug($"A request to update data about {updatedData.ToString()}");
+            return Ok(updatedData);
         }
 
         [HttpDelete(ApiRoutes.IdentificationData.Delete)]
