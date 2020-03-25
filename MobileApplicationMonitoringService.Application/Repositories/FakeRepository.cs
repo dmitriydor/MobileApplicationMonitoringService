@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using MobileApplicationMonitoringService.Application.Models;
 
 namespace MobileApplicationMonitoringService.Application.Repositories

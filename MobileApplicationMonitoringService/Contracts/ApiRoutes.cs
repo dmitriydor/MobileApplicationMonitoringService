@@ -11,11 +11,11 @@ namespace MobileApplicationMonitoringService.Contracts
 
         public static class IdentificationData
         {
-            public const string GetAll = Root + "/main";
-            public const string Get = Root + "/main/{id:Guid}";
-            public const string Create = Root + "/main";
-            public const string Update = Root + "/main/{id:Guid}";
-            public const string Delete = Root + "/main/{id:Guid}";
+            public const string GetAll = Root + "/identification";
+            public const string Get = Root + "/identification/{id:Guid}";
+            public const string Create = Root + "/identification";
+            public const string Update = Root + "/identification/{id:Guid}";
+            public const string Delete = Root + "/identification/{id:Guid}";
         }
     }
 }

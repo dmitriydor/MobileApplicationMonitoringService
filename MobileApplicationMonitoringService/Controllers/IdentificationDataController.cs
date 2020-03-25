@@ -11,12 +11,12 @@ using Serilog;
 namespace MobileApplicationMonitoringService.Controllers
 {
     [ApiController]
-    public class MainController:Controller
+    public class IdentificationDataController:Controller
     {
         private readonly ILogger logger;
         private readonly IIdentificationDataRepository repository;
 
-        public MainController(ILogger logger, IIdentificationDataRepository repository)
+        public IdentificationDataController(ILogger logger, IIdentificationDataRepository repository)
         {
             this.logger = logger;
             this.repository = repository;
@@ -37,14 +37,14 @@ namespace MobileApplicationMonitoringService.Controllers
             {
                 return NotFound();
             }
-            logger.Debug($"A request for data about {identificationData?.ToString()}");
+            logger.Debug("A request for data about {@IdentificationData}",identificationData);
             return Ok(identificationData);
         }
 
         [HttpPost(ApiRoutes.IdentificationData.Create)]
-        public IActionResult Post([FromBody] CreateIdentificationDataRequest requestData)
+        public IActionResult Post([FromBody] CreateIdentificationDataRequest createRequest)
         {
-            if (requestData == null)
+            if (createRequest == null)
             {
                 return BadRequest("Data object is null");
             }
@@ -55,21 +55,21 @@ namespace MobileApplicationMonitoringService.Controllers
 
             var identificationData = new IdentificationData
             {
-                UserName = requestData.UserName,
-                AppVersion = requestData.AppVersion,
-                OperationSystem = requestData.OperationSystem
+                UserName = createRequest.UserName,
+                AppVersion = createRequest.AppVersion,
+                OperationSystem = createRequest.OperationSystem
             };
-            var createdData = repository.Create(identificationData);
-            logger.Debug($"A request to create data about {createdData.ToString()}");
+            var created = repository.Create(identificationData);
+            logger.Debug("A request to create data about {@IdentificationData}",created);
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
-            var locationUri = baseUrl + "/" + ApiRoutes.IdentificationData.Get.Replace("{id:Guid}", createdData.Id.ToString());
+            var locationUri = baseUrl + "/" + ApiRoutes.IdentificationData.Get.Replace("{id:Guid}", created.Id.ToString());
             var response = new IdentificationDataResponse
             {
-                Id = createdData.Id,
-                AppVersion = createdData.AppVersion,
-                OperationSystem = createdData.OperationSystem,
-                UserName = createdData.UserName
+                Id = created.Id,
+                AppVersion = created.AppVersion,
+                OperationSystem = created.OperationSystem,
+                UserName = created.UserName
             };
 
 
@@ -77,9 +77,9 @@ namespace MobileApplicationMonitoringService.Controllers
 
         }
         [HttpPut(ApiRoutes.IdentificationData.Update)]
-        public IActionResult Put([FromRoute]Guid id, [FromBody] UpdateIdentificationDataRequest requestData)
+        public IActionResult Put([FromRoute]Guid id, [FromBody] UpdateIdentificationDataRequest updateRequest)
         {
-            if (requestData == null)
+            if (updateRequest == null)
             {
                 return BadRequest("Data object is null");
             }
@@ -94,13 +94,13 @@ namespace MobileApplicationMonitoringService.Controllers
             {
                 return NotFound();
             }
-            identificationData.AppVersion = requestData.AppVersion;
-            identificationData.OperationSystem = requestData.OperationSystem;
-            identificationData.UserName = requestData.UserName;
-            var updatedData = repository.Update(identificationData);
+            identificationData.AppVersion = updateRequest.AppVersion;
+            identificationData.OperationSystem = updateRequest.OperationSystem;
+            identificationData.UserName = updateRequest.UserName;
+            var updated = repository.Update(identificationData);
             
-            logger.Debug($"A request to update data about {updatedData.ToString()}");
-            return Ok(updatedData);
+            logger.Debug("A request to update data about {@IdentificationData}",updated);
+            return Ok(updated);
         }
 
         [HttpDelete(ApiRoutes.IdentificationData.Delete)]
@@ -111,7 +111,7 @@ namespace MobileApplicationMonitoringService.Controllers
             {
                 return NotFound();
             }
-            logger.Debug($"A request to delete data about {identificationData.ToString()}");
+            logger.Debug("A request to delete data about {@IdentificationData}",identificationData);
             repository.Delete(id);
             return Ok();
         }
