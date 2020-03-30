@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using MobileApplicationMonitoringService.Application.Models;
 using MobileApplicationMonitoringService.Application.Repositories;
 using MobileApplicationMonitoringService.Contracts;
@@ -13,19 +15,21 @@ namespace MobileApplicationMonitoringService.Controllers
     [ApiController]
     public class IdentificationDataController:Controller
     {
-        private readonly ILogger logger;
+        private readonly ILogger<IdentificationDataController> logger;
         private readonly IIdentificationDataRepository repository;
+        private readonly IMapper mapper;
 
-        public IdentificationDataController(ILogger logger, IIdentificationDataRepository repository)
+        public IdentificationDataController(ILogger<IdentificationDataController> logger, IIdentificationDataRepository repository,IMapper mapper)
         {
             this.logger = logger;
             this.repository = repository;
+            this.mapper = mapper;
         }
 
         [HttpGet(ApiRoutes.IdentificationData.GetAll)]
         public IEnumerable<IdentificationData> Get()
         {
-            logger.Debug("There was a request to receive all data");
+            logger.LogDebug("There was a request to receive all data");
             return repository.GetAll().Values;
         }
 
@@ -37,7 +41,7 @@ namespace MobileApplicationMonitoringService.Controllers
             {
                 return NotFound();
             }
-            logger.Debug("A request for data about {@IdentificationData}",identificationData);
+            logger.LogDebug ("A request for data about {@IdentificationData}",identificationData);
             return Ok(identificationData);
         }
 
@@ -53,26 +57,13 @@ namespace MobileApplicationMonitoringService.Controllers
                 return BadRequest("Invalid model object");
             }
 
-            var identificationData = new IdentificationData
-            {
-                UserName = createRequest.UserName,
-                AppVersion = createRequest.AppVersion,
-                OperationSystem = createRequest.OperationSystem
-            };
+            var identificationData = mapper.Map<IdentificationData>(createRequest);
             var created = repository.Create(identificationData);
-            logger.Debug("A request to create data about {@IdentificationData}",created);
+            logger.LogDebug("A request to create data about {@IdentificationData}",created);
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var locationUri = baseUrl + "/" + ApiRoutes.IdentificationData.Get.Replace("{id:Guid}", created.Id.ToString());
-            var response = new IdentificationDataResponse
-            {
-                Id = created.Id,
-                AppVersion = created.AppVersion,
-                OperationSystem = created.OperationSystem,
-                UserName = created.UserName
-            };
-
-
+            var response = mapper.Map<IdentificationDataResponse>(created);
             return Created(locationUri, response);
 
         }
@@ -94,12 +85,10 @@ namespace MobileApplicationMonitoringService.Controllers
             {
                 return NotFound();
             }
-            identificationData.AppVersion = updateRequest.AppVersion;
-            identificationData.OperationSystem = updateRequest.OperationSystem;
-            identificationData.UserName = updateRequest.UserName;
+            identificationData = mapper.Map<IdentificationData>(updateRequest);
             var updated = repository.Update(identificationData);
             
-            logger.Debug("A request to update data about {@IdentificationData}",updated);
+            logger.LogDebug("A request to update data about {@IdentificationData}",updated);
             return Ok(updated);
         }
 
@@ -111,7 +100,7 @@ namespace MobileApplicationMonitoringService.Controllers
             {
                 return NotFound();
             }
-            logger.Debug("A request to delete data about {@IdentificationData}",identificationData);
+            logger.LogDebug("A request to delete data about {@IdentificationData}",identificationData);
             repository.Delete(id);
             return Ok();
         }

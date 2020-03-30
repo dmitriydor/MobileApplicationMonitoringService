@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using MobileApplicationMonitoringService.Application.Repositories;
 using Serilog;
 using ILogger = Serilog.ILogger;
@@ -28,9 +22,15 @@ namespace MobileApplicationMonitoringService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-            services.AddSingleton<ILogger>(Log.Logger);
+            services.AddSingleton<IMapper, Mapper>();
             services.AddSingleton<IIdentificationDataRepository, FakeRepository>();
+            services.AddSwaggerDocument(option =>
+            {
+                option.Title = "Mobile application monitoring service API";
+                option.Description = "";
+                option.Version = "v1";
+            });
+            services.AddControllers();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -39,8 +39,13 @@ namespace MobileApplicationMonitoringService
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
+
             app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>

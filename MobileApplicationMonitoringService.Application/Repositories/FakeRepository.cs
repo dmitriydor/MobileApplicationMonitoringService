@@ -8,10 +8,10 @@ namespace MobileApplicationMonitoringService.Application.Repositories
     {
         private readonly Dictionary<Guid, IdentificationData> dataRepository = new Dictionary<Guid, IdentificationData>()
         {
-            [new Guid("682c3220-be4b-4c07-aeca-8b6473d5a85f")] = new IdentificationData() { Id = new Guid("682c3220-be4b-4c07-aeca-8b6473d5a85f"), AppVersion = "2.2.4", OperationSystem = "android", UserName = "dmitriy doronin" },
-            [new Guid("74e3fc74-f45c-41e1-989c-b7c53acd4003")] = new IdentificationData() { Id = new Guid("74e3fc74-f45c-41e1-989c-b7c53acd4003"), AppVersion = "1.4.0", OperationSystem = "windows", UserName = "dmitriy doronin" },
-            [new Guid("64a1dc26-bf0e-47e1-aeb6-d5bea2faacdf")] = new IdentificationData() { Id = new Guid("64a1dc26-bf0e-47e1-aeb6-d5bea2faacdf"), AppVersion = "2.2.4", OperationSystem = "android", UserName = "dmitriy doronin" },
-            [new Guid("bdc14dc1-29f1-4a0c-b376-0e01d4400396")] = new IdentificationData() { Id = new Guid("bdc14dc1-29f1-4a0c-b376-0e01d4400396"), AppVersion = "2.2.4", OperationSystem = "android", UserName = "dmitriy doronin" },
+            [new Guid("682c3220-be4b-4c07-aeca-8b6473d5a85f")] = new IdentificationData() { Id = new Guid("682c3220-be4b-4c07-aeca-8b6473d5a85f"), AppVersion = "2.2.4", OperationSystem = "android", UserName = "dmitriy doronin", Date = DateTime.UtcNow },
+            [new Guid("74e3fc74-f45c-41e1-989c-b7c53acd4003")] = new IdentificationData() { Id = new Guid("74e3fc74-f45c-41e1-989c-b7c53acd4003"), AppVersion = "1.4.0", OperationSystem = "windows", UserName = "dmitriy doronin", Date = DateTime.UtcNow },
+            [new Guid("64a1dc26-bf0e-47e1-aeb6-d5bea2faacdf")] = new IdentificationData() { Id = new Guid("64a1dc26-bf0e-47e1-aeb6-d5bea2faacdf"), AppVersion = "2.2.4", OperationSystem = "android", UserName = "dmitriy doronin", Date = DateTime.UtcNow },
+            [new Guid("bdc14dc1-29f1-4a0c-b376-0e01d4400396")] = new IdentificationData() { Id = new Guid("bdc14dc1-29f1-4a0c-b376-0e01d4400396"), AppVersion = "2.2.4", OperationSystem = "android", UserName = "dmitriy doronin", Date = DateTime.UtcNow },
 
         };
 
@@ -39,6 +39,7 @@ namespace MobileApplicationMonitoringService.Application.Repositories
         {
             var id = Guid.NewGuid();
             data.Id = id;
+            data.Date = DateTime.UtcNow;
             dataRepository.Add(id, data);
             return data;
         }
@@ -49,6 +50,7 @@ namespace MobileApplicationMonitoringService.Application.Repositories
             {
                 return null;
             }
+            data.Date = DateTime.UtcNow;
             dataRepository[data.Id] = data;
             return dataRepository[data.Id];
         }

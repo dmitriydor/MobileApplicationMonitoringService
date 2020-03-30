@@ -35,7 +35,8 @@ namespace MobileApplicationMonitoringService.Application.Repositories
         {
             var id = Guid.NewGuid();
             data.Id = id;
-            dataRepository.Add(id,data);
+            data.Date = DateTime.UtcNow;
+            dataRepository.Add(id, data);
             return data;
         }
 
@@ -45,6 +46,7 @@ namespace MobileApplicationMonitoringService.Application.Repositories
             {
                 return null;
             }
+            data.Date = DateTime.UtcNow;
             dataRepository[data.Id] = data;
             return dataRepository[data.Id];
         }
