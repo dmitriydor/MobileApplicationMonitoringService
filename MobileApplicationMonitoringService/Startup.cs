@@ -19,7 +19,6 @@ namespace MobileApplicationMonitoringService
         }
 
         public IConfiguration Configuration { get; }
-
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IMapper, Mapper>();
@@ -30,6 +29,7 @@ namespace MobileApplicationMonitoringService
                 option.Description = "";
                 option.Version = "v1";
             });
+            services.AddCors();
             services.AddControllers();
         }
 
@@ -40,6 +40,7 @@ namespace MobileApplicationMonitoringService
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(builder => builder.AllowAnyOrigin());
             app.UseOpenApi();
             app.UseSwaggerUi3();
 
