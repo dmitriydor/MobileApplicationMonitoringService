@@ -13,5 +13,15 @@ services:
    volumes:
     - seq-data:/data
 
+  database:
+    image: mongo
+    container_name: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=identificationsdb
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    ports:
+     - 27017:27017
+
 volumes:
   seq-data:

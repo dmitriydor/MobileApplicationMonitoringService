@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MobileApplicationMonitoringService.Application.Models;
+using MobileApplicationMonitoringService.Application.Options;
 using MobileApplicationMonitoringService.Application.Repositories;
 using Serilog;
-using ILogger = Serilog.ILogger;
 
 namespace MobileApplicationMonitoringService
 {
@@ -22,7 +23,9 @@ namespace MobileApplicationMonitoringService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IMapper, Mapper>();
-            services.AddSingleton<IIdentificationDataRepository, FakeRepository>();
+            services.AddScoped<IDbContext, DbContext>();
+            services.AddSingleton<IMongoOptions, MongoOptions>();
+            services.AddScoped<IIdentificationRepository, IdentificationRepository>();
             services.AddSwaggerDocument(option =>
             {
                 option.Title = "Mobile application monitoring service API";
@@ -39,11 +42,9 @@ namespace MobileApplicationMonitoringService
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseCors(builder => builder.AllowAnyOrigin());
             app.UseOpenApi();
             app.UseSwaggerUi3();
-
+            app.UseCors(builder => builder.AllowAnyOrigin());
             app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
             app.UseStaticFiles();

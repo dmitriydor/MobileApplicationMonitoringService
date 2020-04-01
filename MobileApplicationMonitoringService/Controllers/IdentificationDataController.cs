@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using MobileApplicationMonitoringService.Application.Models;
@@ -15,20 +16,20 @@ namespace MobileApplicationMonitoringService.Controllers
     public class IdentificationDataController:Controller
     {
         private static readonly ILogger logger = Log.ForContext<IdentificationDataController>();
-        private readonly IIdentificationDataRepository repository;
+        private readonly IIdentificationRepository repository;
         private readonly IMapper mapper;
 
-        public IdentificationDataController(IIdentificationDataRepository repository,IMapper mapper)
+        public IdentificationDataController(IIdentificationRepository repository,IMapper mapper)
         {
             this.repository = repository;
             this.mapper = mapper;
         }
 
         [HttpGet(ApiRoutes.IdentificationData.GetAll)]
-        public IEnumerable<IdentificationData> Get()
+        public async Task<IEnumerable<IdentificationData>> Get()
         {
             logger.Debug("There was a request to receive all data");
-            return repository.GetAll().Values;
+            return await repository.GetAll();
         }
 
         [HttpGet(ApiRoutes.IdentificationData.Get)]
@@ -44,7 +45,7 @@ namespace MobileApplicationMonitoringService.Controllers
         }
 
         [HttpPost(ApiRoutes.IdentificationData.Create)]
-        public IActionResult Post([FromBody] CreateIdentificationDataRequest createRequest)
+        public async Task<IActionResult> Post([FromBody] CreateIdentificationDataRequest createRequest)
         {
             if (createRequest == null)
             {
@@ -56,7 +57,7 @@ namespace MobileApplicationMonitoringService.Controllers
             }
 
             var identificationData = mapper.Map<IdentificationData>(createRequest);
-            var created = repository.Create(identificationData);
+            var created = await repository.Create(identificationData);
             logger.Debug("A request to create data about {@IdentificationData}",created);
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
@@ -66,7 +67,7 @@ namespace MobileApplicationMonitoringService.Controllers
 
         }
         [HttpPut(ApiRoutes.IdentificationData.Update)]
-        public IActionResult Put([FromRoute]Guid id, [FromBody] UpdateIdentificationDataRequest updateRequest)
+        public async Task<IActionResult> Put([FromRoute]Guid id, [FromBody] UpdateIdentificationDataRequest updateRequest)
         {
             if (updateRequest == null)
             {
@@ -78,20 +79,20 @@ namespace MobileApplicationMonitoringService.Controllers
                 return BadRequest("Invalid model object");
             }
 
-            var identificationData = repository.GetById(id);
+            var identificationData = await repository.GetById(id);
             if (identificationData == null)
             {
                 return NotFound();
             }
             identificationData = mapper.Map<IdentificationData>(updateRequest);
-            var updated = repository.Update(identificationData);
+            var updated = await repository.Update(identificationData);
             
             logger.Debug("A request to update data about {@IdentificationData}",updated);
             return Ok(updated);
         }
 
         [HttpDelete(ApiRoutes.IdentificationData.Delete)]
-        public IActionResult Delete([FromRoute] Guid id)
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var identificationData = repository.GetById(id);
             if (identificationData == null)
@@ -99,7 +100,7 @@ namespace MobileApplicationMonitoringService.Controllers
                 return NotFound();
             }
             logger.Debug("A request to delete data about {@IdentificationData}",identificationData);
-            repository.Delete(id);
+            await repository.Delete(id);
             return Ok();
         }
     }
