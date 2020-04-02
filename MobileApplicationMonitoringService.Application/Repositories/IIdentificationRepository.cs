@@ -7,10 +7,10 @@ namespace MobileApplicationMonitoringService.Application.Repositories
 {
     public interface IIdentificationRepository
     {
-        public Task<IEnumerable<IdentificationData>> GetAll();
-        public Task<IdentificationData> GetById(Guid id);
-        public Task<IdentificationData> Create(IdentificationData data);
-        public Task<IdentificationData> Update(IdentificationData data);
-        public Task Delete(Guid id);
+        public Task<IEnumerable<IdentificationData>> GetAllAsync();
+        public Task<IdentificationData> GetByIdAsync(Guid id);
+        public Task<IdentificationData> CreateAsync(IdentificationData data);
+        public Task<IdentificationData> UpdateAsync(IdentificationData data);
+        public Task DeleteAsync(Guid id);
     }
 }

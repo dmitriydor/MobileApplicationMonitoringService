@@ -3,7 +3,7 @@ version: '3.7'
 services:
 
   seq:
-   image: datalust/seq
+   image: datalust/seq:5.1
    container_name: seq
    environment:
     - ACCEPT_EULA=Y

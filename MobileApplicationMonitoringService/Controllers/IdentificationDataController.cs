@@ -29,13 +29,13 @@ namespace MobileApplicationMonitoringService.Controllers
         public async Task<IEnumerable<IdentificationData>> Get()
         {
             logger.Debug("There was a request to receive all data");
-            return await repository.GetAll();
+            return await repository.GetAllAsync();
         }
 
         [HttpGet(ApiRoutes.IdentificationData.Get)]
         public IActionResult Get([FromRoute] Guid id)
         {
-            var identificationData = repository.GetById(id);
+            var identificationData = repository.GetByIdAsync(id);
             if (identificationData == null)
             {
                 return NotFound();
@@ -57,7 +57,7 @@ namespace MobileApplicationMonitoringService.Controllers
             }
 
             var identificationData = mapper.Map<IdentificationData>(createRequest);
-            var created = await repository.Create(identificationData);
+            var created = await repository.CreateAsync(identificationData);
             logger.Debug("A request to create data about {@IdentificationData}",created);
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
@@ -79,13 +79,13 @@ namespace MobileApplicationMonitoringService.Controllers
                 return BadRequest("Invalid model object");
             }
 
-            var identificationData = await repository.GetById(id);
+            var identificationData = await repository.GetByIdAsync(id);
             if (identificationData == null)
             {
                 return NotFound();
             }
             identificationData = mapper.Map<IdentificationData>(updateRequest);
-            var updated = await repository.Update(identificationData);
+            var updated = await repository.UpdateAsync(identificationData);
             
             logger.Debug("A request to update data about {@IdentificationData}",updated);
             return Ok(updated);
@@ -94,13 +94,13 @@ namespace MobileApplicationMonitoringService.Controllers
         [HttpDelete(ApiRoutes.IdentificationData.Delete)]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var identificationData = repository.GetById(id);
+            var identificationData = repository.GetByIdAsync(id);
             if (identificationData == null)
             {
                 return NotFound();
             }
             logger.Debug("A request to delete data about {@IdentificationData}",identificationData);
-            await repository.Delete(id);
+            await repository.DeleteAsync(id);
             return Ok();
         }
     }

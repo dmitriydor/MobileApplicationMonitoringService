@@ -14,31 +14,31 @@ namespace MobileApplicationMonitoringService.Application.Repositories
             this.context = context;
         }
 
-        public async Task<IdentificationData> Create(IdentificationData data)
+        public async Task<IdentificationData> CreateAsync(IdentificationData data)
         {
             data.Date = DateTime.UtcNow;
             data.Id = Guid.NewGuid();
             await context.IdentificationList.InsertOneAsync(data);
-            return await GetById(data.Id);
+            return await GetByIdAsync(data.Id);
         }
 
-        public async Task Delete(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
             await context.IdentificationList.DeleteOneAsync(Builders<IdentificationData>.Filter.Eq("Id", id));
         }
 
-        public async Task<IEnumerable<IdentificationData>> GetAll()
+        public async Task<IEnumerable<IdentificationData>> GetAllAsync()
         {
             return await context.IdentificationList.Find(_ => true).ToListAsync();
         }
 
-        public async Task<IdentificationData> GetById(Guid id)
+        public async Task<IdentificationData> GetByIdAsync(Guid id)
         {
             var filter = Builders<IdentificationData>.Filter.Eq("Id", id);
             return await context.IdentificationList.Find(filter).FirstOrDefaultAsync();
         }
 
-        public async Task<IdentificationData> Update(IdentificationData data)
+        public async Task<IdentificationData> UpdateAsync(IdentificationData data)
         {
             var filter = Builders<IdentificationData>.Filter.Eq("Id", data.Id);
             var update = Builders<IdentificationData>.Update
