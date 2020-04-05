@@ -42,6 +42,10 @@ namespace MobileApplicationMonitoringService
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            MigrationRunner runner = new MigrationRunner(new MongoOptions(Configuration));
+            runner.UpdateToLatestMigration();
+            
             app.UseOpenApi();
             app.UseSwaggerUi3();
             app.UseCors(builder => builder.AllowAnyOrigin());

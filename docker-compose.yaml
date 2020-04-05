@@ -8,7 +8,8 @@ services:
    environment:
     - ACCEPT_EULA=Y
    ports:
-    - "5341:5341"
+    - 80:80
+    - 5341:5341
    volumes:
     - seq-data:/data
 
@@ -16,7 +17,7 @@ services:
     image: mongo
     container_name: mongo
     environment:
-      - MONGO_INITDB_DATABASE=identificationsdb
+      - MONGO_INITDB_DATABASE=monitoringdb
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=admin
     ports:
