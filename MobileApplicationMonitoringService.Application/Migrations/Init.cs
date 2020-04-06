@@ -10,6 +10,8 @@ namespace MobileApplicationMonitoringService.Application.Migrations
         public string Description { get; set; } = "Initial migration";
         public void Up(IMongoDatabase db)
         {
+            db.CreateCollection("Events");
+            db.CreateCollection("IdentificationList");
         }
     }
 }

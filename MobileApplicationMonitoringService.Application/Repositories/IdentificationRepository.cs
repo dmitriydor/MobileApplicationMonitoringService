@@ -17,7 +17,6 @@ namespace MobileApplicationMonitoringService.Application.Repositories
         public async Task<IdentificationData> CreateAsync(IdentificationData data)
         {
             data.Date = DateTime.UtcNow;
-            data.Id = Guid.NewGuid();
             await context.IdentificationList.InsertOneAsync(data);
             return await GetByIdAsync(data.Id);
         }
