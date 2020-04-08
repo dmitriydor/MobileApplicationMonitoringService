@@ -12,18 +12,19 @@ using System.Threading.Tasks;
 
 namespace MobileApplicationMonitoringService.Controllers
 {
-    public class EventController
+    [ApiController]
+    public class EventsController:Controller
     {
-        private readonly IEventRepository repository;
-        private static readonly ILogger logger = Log.ForContext<EventController>();
+        private readonly IApplicationEventRepository repository;
+        private static readonly ILogger logger = Log.ForContext<EventsController>();
         private readonly IMapper mapper;
-        public EventController(IEventRepository repository, IMapper mapper)
+        public EventsController(IApplicationEventRepository repository, IMapper mapper)
         {
             this.repository = repository;
             this.mapper = mapper;
         }
-        [HttpGet(ApiRoutes.Event.GetAllFor)]
-        public async Task<IEnumerable<Event>> GetAllFor(Guid identificationId)
+        [HttpGet(ApiRoutes.ApplicationEvent.GetAllFor)]
+        public async Task<IEnumerable<ApplicationEvent>> GetAllFor(Guid identificationId)
         {
             logger.Debug("");
             return await repository.GetAllForAsync(identificationId);

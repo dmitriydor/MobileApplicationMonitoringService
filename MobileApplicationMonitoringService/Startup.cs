@@ -8,7 +8,8 @@ using Microsoft.Extensions.Hosting;
 using MobileApplicationMonitoringService.Application.Models;
 using MobileApplicationMonitoringService.Application.Options;
 using MobileApplicationMonitoringService.Application.Repositories;
-using MobileApplicationMonitoringService.Sevices;
+using MobileApplicationMonitoringService.Infrastructure;
+using MobileApplicationMonitoringService.Services;
 using Serilog;
 
 namespace MobileApplicationMonitoringService
@@ -26,9 +27,9 @@ namespace MobileApplicationMonitoringService
             services.AddSingleton<IMapper, Mapper>();
             services.AddScoped<IDbContext, DbContext>();
             services.AddSingleton<IMongoOptions, MongoOptions>();
-            services.AddScoped<IIdentificationRepository, IdentificationRepository>();
-            services.AddScoped<IEventRepository, EventRepository>();
-            services.AddScoped<IEventService, EventService>();
+            services.AddScoped<IApplicationDataRepository, ApplicationDataRepository>();
+            services.AddScoped<IApplicationEventRepository, ApplicationEventRepository>();
+            services.AddScoped<IApplicationStatisticService, ApplicationStatisticService>();
             services.AddSwaggerDocument(option =>
             {
                 option.Title = "Mobile application monitoring service API";
@@ -47,8 +48,16 @@ namespace MobileApplicationMonitoringService
             }
             
             MigrationRunner runner = new MigrationRunner(new MongoOptions(Configuration));
-            runner.UpdateToLatestMigration();
+            try
+            {
+                runner.UpdateToLatestMigration();
+            }
+            catch (System.Exception e)
+            {
+                Log.Logger.Error(e.Message);
+            }
             
+            app.UseMiddleware<StatusCodeExceptionHandler>();
             app.UseOpenApi();
             app.UseSwaggerUi3();
             app.UseCors(builder => builder.AllowAnyOrigin());

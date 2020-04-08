@@ -7,33 +7,40 @@ using System.Threading.Tasks;
 
 namespace MobileApplicationMonitoringService.Application.Repositories
 {
-    public class EventRepository : IEventRepository
+    public class ApplicationEventRepository : IApplicationEventRepository
     {
         private readonly IDbContext context;
-        public EventRepository(IDbContext context)
+        public ApplicationEventRepository(IDbContext context)
         {
             this.context = context;
         }
 
-        public async Task CreateAsync(Event data)
+        public async Task CreateAsync(ApplicationEvent data)
         {
             await context.Events.InsertOneAsync(data);
         }
 
+        public async Task CreateBatchAsync(IEnumerable<ApplicationEvent> events)
+        {
+            await context.Events.InsertManyAsync(events);
+        }
+
         public Task DeleteAsync(Guid id)
         {
+            //TODO: Implement method DeleteAsync
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<Event>> GetAllForAsync(Guid identificationId)
+        public async Task<IEnumerable<ApplicationEvent>> GetAllForAsync(Guid applicationId)
         {
-            var filter = Builders<Event>.Filter.Eq("IdentificationId", identificationId);
+            var filter = Builders<ApplicationEvent>.Filter.Eq("IdentificationId", applicationId);
             return await context.Events.Find(filter).ToListAsync();
 
         }
 
-        public Task UpdateAsync(Event data)
+        public Task UpdateAsync(ApplicationEvent data)
         {
+            //TODO: Implement method UpdateAsync
             throw new NotImplementedException();
         }
     }

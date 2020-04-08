@@ -9,20 +9,20 @@ namespace MobileApplicationMonitoringService.Contracts
     {
         public const string Root = "api";
 
-        public static class IdentificationData
+        public static class ApplicationData
         {
-            private const string Path = "/identification";
+            private const string Path = "/applications";
             public const string GetAll = Root + Path;
             public const string Get = Root + Path +"/{id:Guid}";
             public const string Create = Root + Path;
             public const string Update = Root + Path + "/{id:Guid}";
             public const string Delete = Root + Path + "/{id:Guid}";
         }
-        public static class Event
+        public static class ApplicationEvent
         {
-            private const string Path = "/event";
+            private const string Path = "/events";
             public const string GetAll = Root + Path;
-            public const string GetAllFor = Root + Path + "/{identificationId:Guid}";
+            public const string GetAllFor = Root + Path + "/{applicationId:Guid}";
             public const string Create = Root + Path;
             public const string Update = Root + Path + "/{id:Guid}";
         }

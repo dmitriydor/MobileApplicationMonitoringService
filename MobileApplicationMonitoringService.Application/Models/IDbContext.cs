@@ -7,7 +7,7 @@ namespace MobileApplicationMonitoringService.Application.Models
 {
     public interface IDbContext
     {
-        IMongoCollection<IdentificationData> IdentificationList { get; }
-        IMongoCollection<Event> Events { get; }
+        IMongoCollection<ApplicationData> Applications { get; }
+        IMongoCollection<ApplicationEvent> Events { get; }
     }
 }

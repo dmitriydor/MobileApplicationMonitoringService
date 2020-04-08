@@ -11,7 +11,6 @@ namespace MobileApplicationMonitoringService.Application.Models
     {
         private readonly IMongoDatabase db ;
         private readonly MigrationLoader migrationLoader;
-
         public MigrationRunner(IMongoOptions options)
         {
             db = new MongoClient(options.ConnectionString).GetDatabase(options.Database);
@@ -27,7 +26,8 @@ namespace MobileApplicationMonitoringService.Application.Models
                 }
                 catch (Exception e)
                 {
-                    throw new Exception($"Migration failed to by applied: {e.Message} \n {migration.Version}, {migration.Description}, Name: {migration.GetType()}, Database: {db.ToString()}"  );
+                    
+                    throw new Exception($"Migration failed to by applied: {e.Message} \n {migration.Version}, {migration.Description}, Name: {migration.GetType()}, Database: {db.ToString()}");
                 }
                 GetDbMigrations().InsertOne(new MigrationModel {Version = migration.Version, Description = migration.Description });
             }

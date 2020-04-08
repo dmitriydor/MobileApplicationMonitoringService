@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MobileApplicationMonitoringService.Contracts.Requests
 {
-    public class CreateEventRequest
+    public class CreateApplicationEventRequest
     {
         public DateTime Date { get; set; }
         public string EventName { get; set; }

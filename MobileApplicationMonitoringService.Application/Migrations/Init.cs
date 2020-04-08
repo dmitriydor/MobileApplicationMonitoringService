@@ -11,13 +11,13 @@ namespace MobileApplicationMonitoringService.Application.Migrations
         public void Up(IMongoDatabase db)
         {
             db.CreateCollection("Events");
-            db.CreateCollection("IdentificationList");
+            db.CreateCollection("Applications");
 
-            var keyIdentificationId = Builders<Event>.IndexKeys.Ascending("IdentificationId");
-            var keyDate = Builders<Event>.IndexKeys.Ascending("Date");
-            db.GetCollection<Event>("Events").Indexes.CreateMany(new[] {
-                new CreateIndexModel<Event>(keyIdentificationId),
-                new CreateIndexModel<Event>(keyDate) 
+            var keyIdentificationId = Builders<ApplicationEvent>.IndexKeys.Ascending("ApplicationId");
+            var keyDate = Builders<ApplicationEvent>.IndexKeys.Ascending("Date");
+            db.GetCollection<ApplicationEvent>("Events").Indexes.CreateMany(new[] {
+                new CreateIndexModel<ApplicationEvent>(keyIdentificationId),
+                new CreateIndexModel<ApplicationEvent>(keyDate) 
             });
         }
     }

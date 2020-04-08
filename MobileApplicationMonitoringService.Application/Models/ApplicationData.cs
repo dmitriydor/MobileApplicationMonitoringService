@@ -6,7 +6,7 @@ using System.Text;
 
 namespace MobileApplicationMonitoringService.Application.Models
 {
-    public sealed class IdentificationData
+    public sealed class ApplicationData
     {
         public Guid Id { get; set; }
         public string UserName { get; set; }
