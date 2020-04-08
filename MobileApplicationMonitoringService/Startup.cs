@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using MobileApplicationMonitoringService.Application.Models;
 using MobileApplicationMonitoringService.Application.Options;
 using MobileApplicationMonitoringService.Application.Repositories;
+using MobileApplicationMonitoringService.Sevices;
 using Serilog;
 
 namespace MobileApplicationMonitoringService
@@ -26,6 +27,8 @@ namespace MobileApplicationMonitoringService
             services.AddScoped<IDbContext, DbContext>();
             services.AddSingleton<IMongoOptions, MongoOptions>();
             services.AddScoped<IIdentificationRepository, IdentificationRepository>();
+            services.AddScoped<IEventRepository, EventRepository>();
+            services.AddScoped<IEventService, EventService>();
             services.AddSwaggerDocument(option =>
             {
                 option.Title = "Mobile application monitoring service API";

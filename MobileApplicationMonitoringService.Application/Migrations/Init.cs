@@ -12,6 +12,13 @@ namespace MobileApplicationMonitoringService.Application.Migrations
         {
             db.CreateCollection("Events");
             db.CreateCollection("IdentificationList");
+
+            var keyIdentificationId = Builders<Event>.IndexKeys.Ascending("IdentificationId");
+            var keyDate = Builders<Event>.IndexKeys.Ascending("Date");
+            db.GetCollection<Event>("Events").Indexes.CreateMany(new[] {
+                new CreateIndexModel<Event>(keyIdentificationId),
+                new CreateIndexModel<Event>(keyDate) 
+            });
         }
     }
 }

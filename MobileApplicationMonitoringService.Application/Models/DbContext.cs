@@ -10,6 +10,7 @@ namespace MobileApplicationMonitoringService.Application.Models
     {
         private readonly IMongoDatabase db;
         public IMongoCollection<IdentificationData> IdentificationList => db.GetCollection<IdentificationData>("IdentificationList");
+        public IMongoCollection<Event> Events => db.GetCollection<Event>("Events");
         public DbContext(IMongoOptions options)
         {
             db = new MongoClient(options.ConnectionString).GetDatabase(options.Database);

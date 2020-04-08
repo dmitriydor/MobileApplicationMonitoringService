@@ -1,11 +1,11 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace MobileApplicationMonitoringService.Application.Models
+namespace MobileApplicationMonitoringService.Contracts.Requests
 {
-    public class Event
+    public class CreateEventRequest
     {
         public DateTime Date { get; set; }
         public string EventName { get; set; }

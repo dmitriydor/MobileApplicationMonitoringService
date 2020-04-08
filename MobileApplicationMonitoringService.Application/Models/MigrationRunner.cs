@@ -10,12 +10,12 @@ namespace MobileApplicationMonitoringService.Application.Models
     public class MigrationRunner
     {
         private readonly IMongoDatabase db ;
-        private readonly MigrationReflection migrationReflection;
+        private readonly MigrationLoader migrationLoader;
 
         public MigrationRunner(IMongoOptions options)
         {
             db = new MongoClient(options.ConnectionString).GetDatabase(options.Database);
-            this.migrationReflection = new MigrationReflection();
+            this.migrationLoader = new MigrationLoader();
         }
         private void ApplyMigrations(IEnumerable<IMigration> migrations)
         {
@@ -53,19 +53,19 @@ namespace MobileApplicationMonitoringService.Application.Models
 
         public void Update(Version version)
         {
-            if (migrationReflection.LatestVersion() == GetLatestDbMigration()?.Version)
+            if (migrationLoader.LatestVersion() == GetLatestDbMigration()?.Version)
             {
                 return;
             }
             
             var currentMigration = GetLatestDbMigration();
-            var unappliedMigrations = migrationReflection.GetUnappliedMigrations(currentMigration).Where(m => m.Version <= version);
+            var unappliedMigrations = migrationLoader.GetUnappliedMigrations(currentMigration).Where(m => m.Version <= version);
             ApplyMigrations(unappliedMigrations);
         }
 
         public void UpdateToLatestMigration()
         {
-            Update(migrationReflection.LatestVersion());
+            Update(migrationLoader.LatestVersion());
         }
         
     }

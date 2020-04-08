@@ -6,11 +6,11 @@ using System.Reflection;
 
 namespace MobileApplicationMonitoringService.Application.Models
 {
-    public class MigrationReflection
+    public class MigrationLoader
     {
         private readonly List<IMigration> migrations = new List<IMigration>();
 
-        public MigrationReflection()
+        public MigrationLoader()
         {
             LoadMigrations();
         }
