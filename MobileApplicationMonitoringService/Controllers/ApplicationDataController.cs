@@ -6,10 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using MobileApplicationMonitoringService.Application.Models;
 using MobileApplicationMonitoringService.Application.Repositories;
 using MobileApplicationMonitoringService.Contracts;
-using MobileApplicationMonitoringService.Contracts.Requests;
-using MobileApplicationMonitoringService.Contracts.Responses;
 using MobileApplicationMonitoringService.Exceptions;
-using MobileApplicationMonitoringService.Filters;
 using MobileApplicationMonitoringService.Services;
 using Serilog;
 
@@ -20,75 +17,44 @@ namespace MobileApplicationMonitoringService.Controllers
     {
         private static readonly ILogger logger = Log.ForContext<ApplicationDataController>();
         private readonly IApplicationDataRepository repository;
-        private readonly IMapper mapper;
-        private readonly IApplicationStatisticService eventService;
-
-        public ApplicationDataController(IApplicationDataRepository repository,IMapper mapper, IApplicationStatisticService eventService)
+        private readonly IApplicationStatisticService statisticService;
+        public ApplicationDataController(IApplicationDataRepository repository, IApplicationStatisticService statisticService)
         {
             this.repository = repository;
-            this.mapper = mapper;
-            this.eventService = eventService;
+            this.statisticService = statisticService;
         }
 
         [HttpGet(ApiRoutes.ApplicationData.GetAll)]
         public async Task<IEnumerable<ApplicationData>> Get()
         {
-            logger.Debug("There was a request to receive all data");
+            logger.Debug("There was a request to receive all application data");
             return await repository.GetAllAsync();
         }
 
         [HttpGet(ApiRoutes.ApplicationData.Get)]
         public async Task<ApplicationData> Get([FromRoute] Guid id)
         {
-            var identificationData = await repository.GetByIdAsync(id);
-            if (identificationData == null)
+            var applicationData = await repository.GetByIdAsync(id);
+            if (applicationData == null)
             {
+                logger.Error("Data not found");
                 throw new StatusCodeException(System.Net.HttpStatusCode.NotFound);
             }
-            logger.Debug("A request for data about {@IdentificationData}",identificationData);
-            return identificationData;
-        }
-        [ModelValidation]
-        [HttpPost(ApiRoutes.ApplicationData.Create)]
-        public async Task<IActionResult> Post([FromBody] CreateApplicationDataRequest createRequest)
-        {
-            var created = await eventService.SaveApplicationStatistic(createRequest);
-
-            logger.Debug("A request to create data about {@IdentificationData}",created);
-
-            var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
-            var locationUri = baseUrl + "/" + ApiRoutes.ApplicationData.Get.Replace("{id:Guid}", created.Id.ToString());
-            var response = mapper.Map<ApplicationDataResponse>(created);
-            
-            return Created(locationUri, response);
-        }
-        [ModelValidation]
-        [HttpPut(ApiRoutes.ApplicationData.Update)]
-        public async Task<IActionResult> Put([FromRoute]Guid id, [FromBody] UpdateApplicationDataRequest updateRequest)
-        {
-            var identificationData = await repository.GetByIdAsync(id);
-            if (identificationData == null)
-            {
-                return NotFound();
-            }
-            identificationData = mapper.Map<ApplicationData>(updateRequest);
-            var updated = await repository.UpdateAsync(identificationData);
-            
-            logger.Debug("A request to update data about {@IdentificationData}",updated);
-            return Ok(updated);
+            logger.Debug("A request for data about {@IdentificationData}",applicationData);
+            return applicationData;
         }
 
         [HttpDelete(ApiRoutes.ApplicationData.Delete)]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        public async Task Delete([FromRoute] Guid id)
         {
-            var identificationData = repository.GetByIdAsync(id);
-            if (identificationData == null)
+            var applicationData = await repository.GetByIdAsync(id);
+            if (applicationData == null)
             {
-                return NotFound();
+                logger.Error("Data to delete not found");
+                throw new StatusCodeException(System.Net.HttpStatusCode.NotFound);
             }
-            logger.Debug("A request to delete data about {@IdentificationData}",identificationData);
-            await repository.DeleteAsync(id);
-            return Ok();
+            logger.Debug("A request to delete data about {@IdentificationData}",applicationData);
+            await statisticService.DeleteApplicationStatisticsAsync(id);
         }
     }
 }

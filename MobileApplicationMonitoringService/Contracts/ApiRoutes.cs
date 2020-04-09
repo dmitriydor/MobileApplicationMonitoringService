@@ -14,8 +14,6 @@ namespace MobileApplicationMonitoringService.Contracts
             private const string Path = "/applications";
             public const string GetAll = Root + Path;
             public const string Get = Root + Path +"/{id:Guid}";
-            public const string Create = Root + Path;
-            public const string Update = Root + Path + "/{id:Guid}";
             public const string Delete = Root + Path + "/{id:Guid}";
         }
         public static class ApplicationEvent
@@ -23,6 +21,12 @@ namespace MobileApplicationMonitoringService.Contracts
             private const string Path = "/events";
             public const string GetAll = Root + Path;
             public const string GetAllFor = Root + Path + "/{applicationId:Guid}";
+            public const string Create = Root + Path;
+            public const string Update = Root + Path + "/{id:Guid}";
+        }
+        public static class Statistics
+        {
+            private const string Path = "/statistics";
             public const string Create = Root + Path;
             public const string Update = Root + Path + "/{id:Guid}";
         }

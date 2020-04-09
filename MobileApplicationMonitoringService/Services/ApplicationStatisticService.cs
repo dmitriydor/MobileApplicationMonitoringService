@@ -12,21 +12,21 @@ namespace MobileApplicationMonitoringService.Services
 {
     public class ApplicationStatisticService : IApplicationStatisticService
     {
-        private readonly IApplicationDataRepository identificationRepository;
+        private readonly IApplicationDataRepository applicationRepository;
         private readonly IApplicationEventRepository eventRepository;
         private readonly IMapper mapper;
-        public ApplicationStatisticService(IApplicationDataRepository identificationRepository, IApplicationEventRepository eventRepository, IMapper mapper)
+        public ApplicationStatisticService(IApplicationDataRepository applicationRepository, IApplicationEventRepository eventRepository, IMapper mapper)
         {
             this.eventRepository = eventRepository;
-            this.identificationRepository = identificationRepository;
+            this.applicationRepository = applicationRepository;
             this.mapper = mapper;
         }
-        public async Task<ApplicationDataResponse> SaveApplicationStatistic(CreateApplicationDataRequest request)
+        public async Task<ApplicationDataResponse> SaveApplicationStatisticAsync(CreateApplicationDataRequest request)
         {
             var device = mapper.Map<ApplicationData>(request);
             if(device != null)
             {
-                await identificationRepository.UpsertAsync(device);
+                await applicationRepository.UpsertAsync(device);
             }
 
             var events = request.Events;
@@ -36,6 +36,11 @@ namespace MobileApplicationMonitoringService.Services
                 await eventRepository.CreateBatchAsync(events);
             }
             return mapper.Map<ApplicationDataResponse>(request);
+        }
+        public async Task DeleteApplicationStatisticsAsync(Guid id)
+        {
+            await eventRepository.DeleteAllForAsync(id);
+            await applicationRepository.DeleteAsync(id);
         }
     }
 }

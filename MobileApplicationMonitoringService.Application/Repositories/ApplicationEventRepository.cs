@@ -25,6 +25,12 @@ namespace MobileApplicationMonitoringService.Application.Repositories
             await context.Events.InsertManyAsync(events);
         }
 
+        public async Task DeleteAllForAsync(Guid applicationId)
+        {
+            var filter = Builders<ApplicationEvent>.Filter.Eq("ApplicationId", applicationId);
+            await context.Events.DeleteManyAsync(filter);
+        }
+
         public Task DeleteAsync(Guid id)
         {
             //TODO: Implement method DeleteAsync
@@ -33,7 +39,7 @@ namespace MobileApplicationMonitoringService.Application.Repositories
 
         public async Task<IEnumerable<ApplicationEvent>> GetAllForAsync(Guid applicationId)
         {
-            var filter = Builders<ApplicationEvent>.Filter.Eq("IdentificationId", applicationId);
+            var filter = Builders<ApplicationEvent>.Filter.Eq("ApplicationId", applicationId);
             return await context.Events.Find(filter).ToListAsync();
 
         }

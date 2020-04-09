@@ -47,7 +47,7 @@ namespace MobileApplicationMonitoringService
                 app.UseDeveloperExceptionPage();
             }
             
-            MigrationRunner runner = new MigrationRunner(new MongoOptions(Configuration));
+            var runner = new MigrationRunner(new MongoOptions(Configuration));
             try
             {
                 runner.UpdateToLatestMigration();
@@ -57,7 +57,6 @@ namespace MobileApplicationMonitoringService
                 Log.Logger.Error(e.Message);
             }
             
-            app.UseMiddleware<StatusCodeExceptionHandler>();
             app.UseOpenApi();
             app.UseSwaggerUi3();
             app.UseCors(builder => builder.AllowAnyOrigin());
@@ -66,6 +65,7 @@ namespace MobileApplicationMonitoringService
             app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthorization();
+            app.UseMiddleware<StatusCodeExceptionHandler>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();

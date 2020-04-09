@@ -26,7 +26,7 @@ namespace MobileApplicationMonitoringService.Controllers
         [HttpGet(ApiRoutes.ApplicationEvent.GetAllFor)]
         public async Task<IEnumerable<ApplicationEvent>> GetAllFor(Guid identificationId)
         {
-            logger.Debug("");
+            logger.Debug("There was a request to receive all events");
             return await repository.GetAllForAsync(identificationId);
         }
         //[HttpPost(ApiRoutes.Event.Create)]

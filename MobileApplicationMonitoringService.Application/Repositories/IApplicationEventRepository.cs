@@ -12,6 +12,7 @@ namespace MobileApplicationMonitoringService.Application.Repositories
         public Task CreateBatchAsync(IEnumerable<ApplicationEvent> events);
         public Task CreateAsync(ApplicationEvent data);
         public Task UpdateAsync(ApplicationEvent data);
+        public Task DeleteAllForAsync(Guid applicationId);
         public Task DeleteAsync(Guid id);
     }
 }

@@ -10,7 +10,7 @@ namespace MobileApplicationMonitoringService.Services
 {
     public interface IApplicationStatisticService
     {
-        Task<ApplicationDataResponse> SaveApplicationStatistic(CreateApplicationDataRequest request);
-
+        Task<ApplicationDataResponse> SaveApplicationStatisticAsync(CreateApplicationDataRequest request);
+        Task DeleteApplicationStatisticsAsync(Guid id);
     }
 }
