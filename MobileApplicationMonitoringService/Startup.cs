@@ -29,7 +29,7 @@ namespace MobileApplicationMonitoringService
             services.AddSingleton<IMongoOptions, MongoOptions>();
             services.AddScoped<IApplicationDataRepository, ApplicationDataRepository>();
             services.AddScoped<IApplicationEventRepository, ApplicationEventRepository>();
-            services.AddScoped<IApplicationStatisticService, ApplicationStatisticService>();
+            services.AddScoped<IApplicationStatisticsService, ApplicationStatisticsService>();
             services.AddSwaggerDocument(option =>
             {
                 option.Title = "Mobile application monitoring service API";
@@ -55,6 +55,7 @@ namespace MobileApplicationMonitoringService
             catch (System.Exception e)
             {
                 Log.Logger.Error(e.Message);
+                throw e;
             }
             
             app.UseOpenApi();

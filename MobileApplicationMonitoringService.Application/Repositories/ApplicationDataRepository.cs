@@ -30,7 +30,7 @@ namespace MobileApplicationMonitoringService.Application.Repositories
             await context.Applications.DeleteOneAsync(Builders<ApplicationData>.Filter.Eq("Id", id));
         }
 
-        public async Task<IEnumerable<ApplicationData>> GetAllAsync()
+        public async Task<List<ApplicationData>> GetAllAsync()
         {
             return await context.Applications.Find(_ => true).ToListAsync();
         }

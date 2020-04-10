@@ -7,7 +7,7 @@ namespace MobileApplicationMonitoringService.Application.Repositories
 {
     public interface IApplicationDataRepository
     {
-        public Task<IEnumerable<ApplicationData>> GetAllAsync();
+        public Task<List<ApplicationData>> GetAllAsync();
         public Task<ApplicationData> GetByIdAsync(Guid id);
         public Task<ApplicationData> UpsertAsync(ApplicationData data);
         public Task<ApplicationData> UpdateAsync(ApplicationData data);

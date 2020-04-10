@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using MobileApplicationMonitoringService.Application.Models;
 using MobileApplicationMonitoringService.Application.Repositories;
 using MobileApplicationMonitoringService.Contracts;
+using MobileApplicationMonitoringService.Contracts.Responses;
 using MobileApplicationMonitoringService.Exceptions;
 using MobileApplicationMonitoringService.Services;
 using Serilog;
@@ -13,48 +14,34 @@ using Serilog;
 namespace MobileApplicationMonitoringService.Controllers
 {
     [ApiController]
+    [Route("api/application")]
     public class ApplicationDataController:Controller
     {
         private static readonly ILogger logger = Log.ForContext<ApplicationDataController>();
-        private readonly IApplicationDataRepository repository;
-        private readonly IApplicationStatisticService statisticService;
-        public ApplicationDataController(IApplicationDataRepository repository, IApplicationStatisticService statisticService)
+        private readonly IApplicationStatisticsService statisticService;
+        public ApplicationDataController(IApplicationStatisticsService statisticService)
         {
-            this.repository = repository;
             this.statisticService = statisticService;
         }
 
-        [HttpGet(ApiRoutes.ApplicationData.GetAll)]
-        public async Task<IEnumerable<ApplicationData>> Get()
+        [HttpGet]
+        public async Task<List<ApplicationStatisticsResponse>> Get()
         {
             logger.Debug("There was a request to receive all application data");
-            return await repository.GetAllAsync();
+            return await statisticService.GetAllApplicationStatisticsAsync();
         }
 
-        [HttpGet(ApiRoutes.ApplicationData.Get)]
-        public async Task<ApplicationData> Get([FromRoute] Guid id)
+        [HttpGet("{id}")]
+        public async Task<ApplicationStatisticsResponse> Get([FromRoute] Guid id)
         {
-            var applicationData = await repository.GetByIdAsync(id);
-            if (applicationData == null)
+            var applicationStatistics = await statisticService.GetApplicationStatisticsByIdAsync(id);
+            if (applicationStatistics == null)
             {
                 logger.Error("Data not found");
                 throw new StatusCodeException(System.Net.HttpStatusCode.NotFound);
             }
-            logger.Debug("A request for data about {@IdentificationData}",applicationData);
-            return applicationData;
-        }
-
-        [HttpDelete(ApiRoutes.ApplicationData.Delete)]
-        public async Task Delete([FromRoute] Guid id)
-        {
-            var applicationData = await repository.GetByIdAsync(id);
-            if (applicationData == null)
-            {
-                logger.Error("Data to delete not found");
-                throw new StatusCodeException(System.Net.HttpStatusCode.NotFound);
-            }
-            logger.Debug("A request to delete data about {@IdentificationData}",applicationData);
-            await statisticService.DeleteApplicationStatisticsAsync(id);
+            logger.Debug("A request for data about {@ApplicationStatistics}", applicationStatistics);
+            return applicationStatistics;
         }
     }
 }

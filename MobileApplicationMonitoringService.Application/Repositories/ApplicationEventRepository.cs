@@ -1,4 +1,5 @@
 ﻿using MobileApplicationMonitoringService.Application.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -31,17 +32,11 @@ namespace MobileApplicationMonitoringService.Application.Repositories
             await context.Events.DeleteManyAsync(filter);
         }
 
-        public Task DeleteAsync(Guid id)
-        {
-            //TODO: Implement method DeleteAsync
-            throw new NotImplementedException();
-        }
-
-        public async Task<IEnumerable<ApplicationEvent>> GetAllForAsync(Guid applicationId)
+        public async Task<List<ApplicationEvent>> GetAllForAsync(Guid applicationId)
         {
             var filter = Builders<ApplicationEvent>.Filter.Eq("ApplicationId", applicationId);
-            return await context.Events.Find(filter).ToListAsync();
-
+            var list = await context.Events.Find(filter).ToListAsync();
+            return list;
         }
 
         public Task UpdateAsync(ApplicationEvent data)

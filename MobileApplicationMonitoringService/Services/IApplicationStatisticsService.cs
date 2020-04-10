@@ -3,14 +3,15 @@ using MobileApplicationMonitoringService.Contracts.Requests;
 using MobileApplicationMonitoringService.Contracts.Responses;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MobileApplicationMonitoringService.Services
 {
-    public interface IApplicationStatisticService
+    public interface IApplicationStatisticsService
     {
-        Task<ApplicationDataResponse> SaveApplicationStatisticAsync(CreateApplicationDataRequest request);
+        Task SaveApplicationStatisticsAsync(SaveApplicationStatisticsRequest request);
         Task DeleteApplicationStatisticsAsync(Guid id);
+        Task<List<ApplicationStatisticsResponse>> GetAllApplicationStatisticsAsync();
+        Task<ApplicationStatisticsResponse> GetApplicationStatisticsByIdAsync(Guid id);
     }
 }
