@@ -5,15 +5,9 @@ using System.Text;
 
 namespace MobileApplicationMonitoringService.Application.Options
 {
-    public class MongoOptions:IMongoOptions
+    public class MongoOptions
     {
         public string Database { get; set; }
         public string ConnectionString { get; set; }
-        
-        public MongoOptions(IConfiguration configuration)
-        {
-            Database = configuration["MongoOptions:Database"];
-            ConnectionString = configuration["MongoOptions:ConnectionString"];
-        }
     }
 }

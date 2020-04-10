@@ -1,7 +1,7 @@
 ﻿using System;
 using MongoDB.Driver;
 
-namespace MobileApplicationMonitoringService.Application.Models
+namespace MobileApplicationMonitoringService.Application.Migrations
 {
     public interface IMigration
     {

@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using MobileApplicationMonitoringService.Application.Data;
+using MobileApplicationMonitoringService.Application.Migrations;
 using MobileApplicationMonitoringService.Application.Models;
 using MobileApplicationMonitoringService.Application.Options;
 using MobileApplicationMonitoringService.Application.Repositories;
@@ -21,12 +24,12 @@ namespace MobileApplicationMonitoringService
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IMapper, Mapper>();
             services.AddScoped<IDbContext, DbContext>();
-            services.AddSingleton<IMongoOptions, MongoOptions>();
+            services.AddSingleton<MigrationRunner>();
             services.AddScoped<IApplicationDataRepository, ApplicationDataRepository>();
             services.AddScoped<IApplicationEventRepository, ApplicationEventRepository>();
             services.AddScoped<IApplicationStatisticsService, ApplicationStatisticsService>();
@@ -38,6 +41,11 @@ namespace MobileApplicationMonitoringService
             });
             services.AddCors();
             services.AddControllers();
+            services.Configure<MongoOptions>(options =>
+            {
+                options.ConnectionString = Configuration["MongoOptions:ConnectionString"];
+                options.Database = Configuration["MongoOptions:Database"];
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -47,7 +55,7 @@ namespace MobileApplicationMonitoringService
                 app.UseDeveloperExceptionPage();
             }
             
-            var runner = new MigrationRunner(new MongoOptions(Configuration));
+            var runner = app.ApplicationServices.GetService<MigrationRunner>();
             try
             {
                 runner.UpdateToLatestMigration();

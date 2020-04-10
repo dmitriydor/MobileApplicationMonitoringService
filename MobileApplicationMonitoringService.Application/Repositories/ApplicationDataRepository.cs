@@ -1,4 +1,5 @@
-﻿using MobileApplicationMonitoringService.Application.Models;
+﻿using MobileApplicationMonitoringService.Application.Data;
+using MobileApplicationMonitoringService.Application.Models;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;

@@ -1,11 +1,8 @@
-﻿using MongoDB.Bson;
+﻿using System;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace MobileApplicationMonitoringService.Application.Models
+namespace MobileApplicationMonitoringService.Application.Migrations
 {
     public class MigrationModel
     {

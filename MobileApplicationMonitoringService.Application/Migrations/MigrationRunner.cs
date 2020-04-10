@@ -1,19 +1,19 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Options;
 using MobileApplicationMonitoringService.Application.Options;
 using MongoDB.Driver;
 
-namespace MobileApplicationMonitoringService.Application.Models
+namespace MobileApplicationMonitoringService.Application.Migrations
 {
     public class MigrationRunner
     {
         private readonly IMongoDatabase db ;
         private readonly MigrationLoader migrationLoader;
-        public MigrationRunner(IMongoOptions options)
+        public MigrationRunner(IOptions<MongoOptions> options)
         {
-            db = new MongoClient(options.ConnectionString).GetDatabase(options.Database);
+            db = new MongoClient(options.Value.ConnectionString).GetDatabase(options.Value.Database);
             this.migrationLoader = new MigrationLoader();
         }
         private void ApplyMigrations(IEnumerable<IMigration> migrations)
