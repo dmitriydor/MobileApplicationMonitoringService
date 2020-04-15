@@ -45,6 +45,10 @@ namespace MobileApplicationMonitoringService.Services
         public async Task<List<ApplicationStatisticsResponse>> GetAllApplicationStatisticsAsync()
         {
             var applicationData = await applicationRepository.GetAllAsync();
+            if (applicationData == null)
+            {
+                return null;
+            }
             var applicationStatistics = mapper.Map<List<ApplicationStatisticsResponse>>(applicationData);
             foreach(var app in applicationStatistics)
             {
@@ -56,6 +60,10 @@ namespace MobileApplicationMonitoringService.Services
         public async Task<ApplicationStatisticsResponse> GetApplicationStatisticsByIdAsync(Guid id)
         {
             var applicationData = await applicationRepository.GetByIdAsync(id);
+            if (applicationData == null)
+            {
+                return null;
+            }
             var applicationStatistics = mapper.Map<ApplicationStatisticsResponse>(applicationData);
             applicationStatistics.Events = await eventRepository.GetAllForAsync(id);
             return applicationStatistics;
