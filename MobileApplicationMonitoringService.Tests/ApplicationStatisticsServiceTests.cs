@@ -3,6 +3,8 @@ using MobileApplicationMonitoringService.Application.Repositories;
 using MobileApplicationMonitoringService.Services;
 using System;
 using System.Collections.Generic;
+using FluentAssertions;
+using MobileApplicationMonitoringService.Application.Migrations;
 using MobileApplicationMonitoringService.Contracts.Requests;
 using MobileApplicationMonitoringService.Contracts.Responses;
 using Xunit;
@@ -20,7 +22,7 @@ namespace MobileApplicationMonitoringService.Tests
         }
 
         [Fact]
-        public async void  SaveApplicationStatistics_CanSaveModel_Test()
+        public async void  SaveApplicationStatistics_ValidModel_ShouldSaveModel()
         {
             Guid id = Guid.NewGuid();
             var request = new SaveApplicationStatisticsRequest() {
@@ -51,16 +53,13 @@ namespace MobileApplicationMonitoringService.Tests
             await applicationStatisticsService.SaveApplicationStatisticsAsync(request);
             var result = 
                 await applicationStatisticsService.GetApplicationStatisticsByIdAsync(id);
-            Assert.NotNull(result);
-            Assert.IsType<ApplicationStatisticsResponse>(result);
-            Assert.Equal(id,result.Id);
+            result.Should().BeOfType<ApplicationStatisticsResponse>().Which.Id.Should().Be(id);
         }
         [Fact]
-        public async void Test()
+        public async void DeleteApplicationStatistics_ValidModel_ShouldDeleteModel()
         {
             Guid id = Guid.NewGuid();
-            var request = new SaveApplicationStatisticsRequest()
-            {
+            var request = new SaveApplicationStatisticsRequest() {
                 Id = id,
                 AppVersion = "0.0.0",
                 OperationSystem = "windows",
@@ -88,7 +87,7 @@ namespace MobileApplicationMonitoringService.Tests
             await applicationStatisticsService.DeleteApplicationStatisticsAsync(id);
             var result =
                 await applicationStatisticsService.GetApplicationStatisticsByIdAsync(id);
-            Assert.Null(result);
+            result.Should().BeNull();
         }    
     }
 }
