@@ -6,67 +6,92 @@ using MobileApplicationMonitoringService.Contracts.Responses;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MobileApplicationMonitoringService.Application.Data;
 
 namespace MobileApplicationMonitoringService.Services
 {
     public class ApplicationStatisticsService : IApplicationStatisticsService
     {
-        private readonly IApplicationDataRepository applicationRepository;
-        private readonly IApplicationEventRepository eventRepository;
         private readonly IMapper mapper;
-        public ApplicationStatisticsService(IApplicationDataRepository applicationRepository, IApplicationEventRepository eventRepository, IMapper mapper)
+        public ApplicationStatisticsService(IMapper mapper)
         {
-            this.eventRepository = eventRepository;
-            this.applicationRepository = applicationRepository;
             this.mapper = mapper;
         }
         public async Task SaveApplicationStatisticsAsync(SaveApplicationStatisticsRequest request)
         {
-            var applicationData = mapper.Map<ApplicationData>(request);
-            if(applicationData != null)
+            using (var uow = new UnitOfWorkFactory().CreateUnitOfWork())
             {
-                await applicationRepository.UpsertAsync(applicationData);
-            }
-            List<ApplicationEvent> applicationEvents = mapper.Map<List<ApplicationEvent>>(request.Events);
-            if(applicationEvents != null)
-            {
+                var applicationRepository = uow.GetRepository<ApplicationDataRepository>();
+                var eventRepository = uow.GetRepository<ApplicationEventRepository>();
                 
-                applicationEvents.ForEach(e => e.ApplicationId = applicationData.Id);
-                await eventRepository.CreateBatchAsync(applicationEvents);
+                var applicationData = mapper.Map<ApplicationData>(request);
+                if(applicationData != null)
+                {
+                    await applicationRepository.UpsertAsync(applicationData);
+                }
+                List<ApplicationEvent> applicationEvents = mapper.Map<List<ApplicationEvent>>(request.Events);
+                if(applicationEvents != null)
+                {
+                
+                    applicationEvents.ForEach(e => e.ApplicationId = applicationData.Id);
+                    await eventRepository.CreateBatchAsync(applicationEvents);
+                }
             }
+            
         }
 
         public async Task DeleteApplicationStatisticsAsync(Guid id)
         {
-            await eventRepository.DeleteAllForAsync(id);
-            await applicationRepository.DeleteAsync(id);
+            using (var uow = new UnitOfWorkFactory().CreateUnitOfWork())
+            {
+                var applicationRepository = uow.GetRepository<ApplicationDataRepository>();
+                var eventRepository = uow.GetRepository<ApplicationEventRepository>();
+
+                await eventRepository.DeleteAllForAsync(id);
+                await applicationRepository.DeleteAsync(id);
+            }
         }
 
         public async Task<List<ApplicationStatisticsResponse>> GetAllApplicationStatisticsAsync()
         {
-            var applicationData = await applicationRepository.GetAllAsync();
-            if (applicationData == null)
+            using (var uow = new UnitOfWorkFactory().CreateUnitOfWork())
             {
-                return null;
+                var applicationRepository = uow.GetRepository<ApplicationDataRepository>();
+                var eventRepository = uow.GetRepository<ApplicationEventRepository>();
+
+                var applicationData = await applicationRepository.GetAllAsync();
+                if (applicationData == null)
+                {
+                    return null;
+                }
+
+                var applicationStatistics = mapper.Map<List<ApplicationStatisticsResponse>>(applicationData);
+                foreach (var app in applicationStatistics)
+                {
+                    app.Events = await eventRepository.GetAllForAsync(app.Id);
+                }
+
+                return applicationStatistics;
             }
-            var applicationStatistics = mapper.Map<List<ApplicationStatisticsResponse>>(applicationData);
-            foreach(var app in applicationStatistics)
-            {
-                app.Events = await eventRepository.GetAllForAsync(app.Id);
-            }
-            return applicationStatistics;
         }
 
         public async Task<ApplicationStatisticsResponse> GetApplicationStatisticsByIdAsync(Guid id)
         {
-            var applicationData = await applicationRepository.GetByIdAsync(id);
-            if (applicationData == null)
+            using (var uow = new UnitOfWorkFactory().CreateUnitOfWork())
             {
-                return null;
+                var applicationRepository = uow.GetRepository<ApplicationDataRepository>();
+                var eventRepository = uow.GetRepository<ApplicationEventRepository>();
+
+                var applicationData = await applicationRepository.GetByIdAsync(id);
+                if (applicationData == null)
+                {
+                    return null;
+                }
+
+                var applicationStatistics = mapper.Map<ApplicationStatisticsResponse>(applicationData);
+                applicationStatistics.Events = await eventRepository.GetAllForAsync(id);
+                return applicationStatistics;
             }
-            var applicationStatistics = mapper.Map<ApplicationStatisticsResponse>(applicationData);
-            applicationStatistics.Events = await eventRepository.GetAllForAsync(id);
-            return applicationStatistics;
         }
     }
 }

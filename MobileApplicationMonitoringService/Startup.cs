@@ -30,8 +30,6 @@ namespace MobileApplicationMonitoringService
             services.AddSingleton<IMapper, Mapper>();
             services.AddScoped<IDbContext, DbContext>();
             services.AddSingleton<MigrationRunner>();
-            services.AddScoped<IApplicationDataRepository, ApplicationDataRepository>();
-            services.AddScoped<IApplicationEventRepository, ApplicationEventRepository>();
             services.AddScoped<IApplicationStatisticsService, ApplicationStatisticsService>();
             services.AddSwaggerDocument(option =>
             {
@@ -54,6 +52,8 @@ namespace MobileApplicationMonitoringService
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            UnitOfWorkFactory.ServiceProvider = app.ApplicationServices;
             
             var runner = app.ApplicationServices.GetService<MigrationRunner>();
             try
