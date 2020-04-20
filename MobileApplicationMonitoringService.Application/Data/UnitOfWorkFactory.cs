@@ -2,14 +2,11 @@
 
 namespace MobileApplicationMonitoringService.Application.Data
 {
-    public class UnitOfWorkFactory:IUnitOfWorkFactory
+    public class UnitOfWorkFactory
     {
         public static IServiceProvider ServiceProvider;
-        public UnitOfWorkFactory()
-        {
-        }
 
-        public UnitOfWork CreateUnitOfWork()
+        public static UnitOfWork CreateUnitOfWork()
         {
             return new UnitOfWork(ServiceProvider);
         }

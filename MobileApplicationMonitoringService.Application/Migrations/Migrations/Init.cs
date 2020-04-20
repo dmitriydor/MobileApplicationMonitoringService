@@ -1,5 +1,6 @@
 ﻿using System;
 using MobileApplicationMonitoringService.Application.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace MobileApplicationMonitoringService.Application.Migrations

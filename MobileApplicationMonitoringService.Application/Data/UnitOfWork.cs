@@ -17,7 +17,7 @@ namespace MobileApplicationMonitoringService.Application.Data
         {
             this.serviceProvider = serviceProvider;
             //---------------------
-            session = new MongoClient("mongodb://admin:admin@localhost:27017").StartSession();
+            session = new MongoClient("mongodb://localhost:27017").StartSession();
             //---------------------
             session.StartTransaction();
         }
@@ -37,10 +37,10 @@ namespace MobileApplicationMonitoringService.Application.Data
         public T GetRepository<T>()
         {
             var ctor = GetConstructor<T>();
-            var ctorParameters = ctor.GetParameters()
-                .Select(x => 
-                    x.ParameterType == typeof(IClientSessionHandle) ? session : serviceProvider.GetService(x.ParameterType));
-            return (T)Activator.CreateInstance(typeof(T), ctorParameters);
+            var ctorParameters = ctor.GetParameters();
+            Object[] param = ctorParameters.Select(x => 
+                    (x.ParameterType == typeof(IClientSessionHandle))? session : serviceProvider.GetService(x.ParameterType)).ToArray();
+            return (T)ctor.Invoke(param);
         }
         public void Commit()
         {
