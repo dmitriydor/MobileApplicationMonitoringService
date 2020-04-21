@@ -13,7 +13,7 @@ namespace MobileApplicationMonitoringService.Application.Repositories
     {
         private readonly IDbContext context;
         private readonly IClientSessionHandle session;
-        public ApplicationEventRepository(IClientSessionHandle session, DbContext context)
+        public ApplicationEventRepository(IClientSessionHandle session, IDbContext context)
         {
             this.context = context;
             this.session = session;

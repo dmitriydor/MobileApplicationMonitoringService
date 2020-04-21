@@ -8,7 +8,7 @@ using MongoDB.Driver;
 
 namespace MobileApplicationMonitoringService.Tests
 {
-    public class DbContextFixture : IDisposable,IDbContext
+    public class DbContextFixture : IDisposable, IDbContext
     {
         private MongoOptions options = new MongoOptions();
         private readonly IMongoClient dbClient;
@@ -20,7 +20,7 @@ namespace MobileApplicationMonitoringService.Tests
         public DbContextFixture()
         {
             options.Database = "monitoringdb";
-            options.ConnectionString = "mongodb://admin:admin@localhost:27017";
+            options.ConnectionString = "mongodb://localhost:27017";
             runner = new MigrationRunner(new OptionsWrapper<MongoOptions>(options));
             runner.UpdateToLatestMigration();
             dbClient = new MongoClient(options.ConnectionString);
@@ -30,6 +30,6 @@ namespace MobileApplicationMonitoringService.Tests
         {
             dbClient.DropDatabase(options.Database);
         }
-        
+
     }
 }

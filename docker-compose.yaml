@@ -18,7 +18,7 @@ services:
       context: ./docker
       dockerfile: mongo.Dockerfile
     ports:
-     - 27017:27017
+      - 27017:27017
 
 volumes:
   seq-data:
