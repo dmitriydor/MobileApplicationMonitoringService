@@ -7,20 +7,18 @@ using FluentAssertions;
 using MobileApplicationMonitoringService.Application.Migrations;
 using MobileApplicationMonitoringService.Contracts.Requests;
 using MobileApplicationMonitoringService.Contracts.Responses;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
 namespace MobileApplicationMonitoringService.Tests
 {
-    [Collection("Database context")]
-    public class ApplicationStatisticsServiceTests
+    public class ApplicationStatisticsServiceTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private DbContextFixture fixture;
-
-        public ApplicationStatisticsServiceTests(DbContextFixture fixture)
+        private CustomWebApplicationFactory<Startup> factory;
+        public ApplicationStatisticsServiceTests(CustomWebApplicationFactory<Startup> factory) 
         {
-            this.fixture = fixture;
+            this.factory = factory;
         }
-
         [Fact]
         public async void  SaveApplicationStatistics_ValidModel_ShouldSaveModel()
         {
@@ -44,12 +42,7 @@ namespace MobileApplicationMonitoringService.Tests
                     }
                 }
             };
-            var mockAppDataRep = new ApplicationDataRepository(fixture);
-            var mockAppEventRep = new ApplicationEventRepository(fixture);
-            var mockMapper = new Mapper();
-
-            var applicationStatisticsService =
-                new ApplicationStatisticsService(mockAppDataRep, mockAppEventRep, mockMapper);
+            var applicationStatisticsService = (IApplicationStatisticsService)factory.Services.GetService(typeof(IApplicationStatisticsService));
             await applicationStatisticsService.SaveApplicationStatisticsAsync(request);
             var result = 
                 await applicationStatisticsService.GetApplicationStatisticsByIdAsync(id);
@@ -78,11 +71,7 @@ namespace MobileApplicationMonitoringService.Tests
                     }
                 }
             };
-            var mockAppDataRep = new ApplicationDataRepository(fixture);
-            var mockAppEventRep = new ApplicationEventRepository(fixture);
-            var mockMapper = new Mapper();
-            var applicationStatisticsService =
-                new ApplicationStatisticsService(mockAppDataRep, mockAppEventRep, mockMapper);
+            var applicationStatisticsService = (IApplicationStatisticsService)factory.Services.GetService(typeof(IApplicationStatisticsService));
             await applicationStatisticsService.SaveApplicationStatisticsAsync(request);
             await applicationStatisticsService.DeleteApplicationStatisticsAsync(id);
             var result =

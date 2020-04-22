@@ -1,27 +1,24 @@
 version: '3.7'
 
 services:
-
   seq:
-   image: datalust/seq:5.1
-   container_name: seq
-   environment:
+    image: datalust/seq:5.1
+    container_name: seq
+    environment:
     - ACCEPT_EULA=Y
-   ports:
+    ports:
     - 80:80
     - 5341:5341
-   volumes:
+    volumes:
     - seq-data:/data
 
   database:
-    image: mongo
-    container_name: mongo
-    environment:
-      - MONGO_INITDB_DATABASE=monitoringdb
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=admin
+    container_name: mongo1
+    build:
+      context: ./docker
+      dockerfile: mongo.Dockerfile
     ports:
-     - 27017:27017
+      - 27017:27017
 
 volumes:
   seq-data:
