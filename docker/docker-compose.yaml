@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  seq:
+    image: datalust/seq:5.1
+    container_name: seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - 5341:5341
+    volumes:
+      - ../docker-data/seq:/data
+
+  database:
+    container_name: mongo
+    build:
+      context: ./Mongo
+      dockerfile: mongo.Dockerfile
+    ports:
+      - 27017:27017
+  
+  portainer:
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    ports:
+      - 9000:9000
+      - 8000:8000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../docker-data/portrainer:/data

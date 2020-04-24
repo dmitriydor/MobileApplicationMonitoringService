@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  database:
+    container_name: mongo-test
+    build:
+      context: ./Mongo
+      dockerfile: mongo.Dockerfile
+    ports:
+      - 27017:27017

@@ -1,0 +1,46 @@
+FROM jetbrains/teamcity-minimal-agent
+
+#Basic setup
+ENV OS_LINUX=true
+ENV TZ=Europe/Moscow
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+COPY ./apt-sources.list /etc/apt/sources.list
+RUN sudo apt-get update \
+    && sudo apt-get install -y \
+    tzdata \
+    zip \
+    git \
+    iproute2 \
+    openssl \
+    ca-certificates
+
+#.net SDK
+ENV FEATURE_DOTNET=true
+RUN curl -sL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --version 2.2.203 \
+    && curl -sL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --version 3.1.100
+ENV PATH="/root/.dotnet:/root/.dotnet/tools:${PATH}"
+ENV DOTNET_ROOT="/root/.dotnet"
+RUN dotnet --list-sdks
+
+
+#Node.js
+ENV FEATURE_NODEJS=true
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+    && sudo -E apt-get install -y nodejs \
+    && sudo -E apt-get install -y gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
+
+ENV NODE_OPTIONS=--max_old_space_size=8192
+
+#docker
+ENV FEATURE_DOCKER=true
+RUN curl -sSL https://get.docker.com/ | sh \
+    && sudo apt-get install -y systemd \
+    && sudo systemctl enable docker \
+    && curl -L https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose \
+    && chmod +x /usr/local/bin/docker-compose
+COPY run-docker.sh /services/run-docker.sh
+
+COPY entry-point.sh entry-point.sh
+RUN chmod 777 entry-point.sh
+
+ENTRYPOINT "/entry-point.sh"

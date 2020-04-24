@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  server:
+    image: 'jetbrains/teamcity-server'
+    volumes: 
+      - ../../docker-data/server/data:/data/teamcity_server/datadir
+      - ../../docker-data/server/logs:/data/teamcity_server/logs
+    ports:
+      - 8111:8111
+    environment:
+      - TEAMCITY_SERVER_MEM_OPTS="-Xmx750m"
+  agent:
+    build:
+      context: ./agent-build
+      dockerfile: dockerfile
+    volumes:
+      - ../../docker-data/agent/conf:/data/teamcity_agent/conf
+      - ../../docker-data/certs:/etc/docker/certs.d
+      - ../../docker-data/certs:/etc/ssl/certs
+    environment:
+      - SERVER_URL=server:8111
+    privileged: true
+
+

@@ -1,0 +1,20 @@
+deb http://linux-mirror.infotecs.ru/ubuntu/ bionic main restricted
+deb-src http://linux-mirror.infotecs.ru/ubuntu/ bionic main restricted
+deb http://linux-mirror.infotecs.ru/ubuntu/ bionic-updates main restricted
+deb-src http://linux-mirror.infotecs.ru/ubuntu/ bionic-updates main restricted
+deb http://linux-mirror.infotecs.ru/ubuntu/ bionic universe
+deb-src http://linux-mirror.infotecs.ru/ubuntu/ bionic universe
+deb http://linux-mirror.infotecs.ru/ubuntu/ bionic-updates universe
+deb-src http://linux-mirror.infotecs.ru/ubuntu/ bionic-updates universe
+deb http://linux-mirror.infotecs.ru/ubuntu/ bionic multiverse
+deb-src http://linux-mirror.infotecs.ru/ubuntu/ bionic multiverse
+deb http://linux-mirror.infotecs.ru/ubuntu/ bionic-updates multiverse
+deb-src http://linux-mirror.infotecs.ru/ubuntu/ bionic-updates multiverse
+deb http://linux-mirror.infotecs.ru/ubuntu/ bionic-backports main restricted universe multiverse
+deb-src http://linux-mirror.infotecs.ru/ubuntu/ bionic-backports main restricted universe multiverse
+deb http://linux-mirror.infotecs.ru/ubuntu/ bionic-security main restricted
+deb-src http://linux-mirror.infotecs.ru/ubuntu/ bionic-security main restricted
+deb http://linux-mirror.infotecs.ru/ubuntu/ bionic-security universe
+deb-src http://linux-mirror.infotecs.ru/ubuntu/ bionic-security universe
+deb http://linux-mirror.infotecs.ru/ubuntu/ bionic-security multiverse
+deb-src http://linux-mirror.infotecs.ru/ubuntu/ bionic-security multiverse
