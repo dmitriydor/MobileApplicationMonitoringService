@@ -21,27 +21,28 @@ namespace MobileApplicationMonitoringService.Application.Repositories
         {
             data.Date = DateTime.UtcNow;
             var filter = Builders<ApplicationData>.Filter.Eq("Id", data.Id);
-            return await context.Applications.FindOneAndReplaceAsync(session,filter, data,
-                new FindOneAndReplaceOptions<ApplicationData, ApplicationData> {
-                    IsUpsert = true, 
-                    ReturnDocument = ReturnDocument.After 
+            return await context.Applications.FindOneAndReplaceAsync(session, filter, data,
+                new FindOneAndReplaceOptions<ApplicationData, ApplicationData>
+                {
+                    IsUpsert = true,
+                    ReturnDocument = ReturnDocument.After
                 });
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            await context.Applications.DeleteOneAsync(session,Builders<ApplicationData>.Filter.Eq("Id", id));
+            await context.Applications.DeleteOneAsync(session, Builders<ApplicationData>.Filter.Eq("Id", id));
         }
 
         public async Task<List<ApplicationData>> GetAllAsync()
         {
-            return await context.Applications.Find(session,_ => true).ToListAsync();
+            return await context.Applications.Find(session, _ => true).ToListAsync();
         }
 
         public async Task<ApplicationData> GetByIdAsync(Guid id)
         {
             var filter = Builders<ApplicationData>.Filter.Eq("Id", id);
-            return await context.Applications.Find(session,filter).FirstOrDefaultAsync();
+            return await context.Applications.Find(session, filter).FirstOrDefaultAsync();
         }
 
         public async Task<ApplicationData> UpdateAsync(ApplicationData data)
@@ -52,7 +53,7 @@ namespace MobileApplicationMonitoringService.Application.Repositories
                 .Set(f => f.OperationSystem, data.OperationSystem)
                 .Set(f => f.AppVersion, data.AppVersion)
                 .Set(f => f.Date, DateTime.UtcNow);
-            return await context.Applications.FindOneAndUpdateAsync(session,filter,update);
+            return await context.Applications.FindOneAndUpdateAsync(session, filter, update);
         }
     }
 }

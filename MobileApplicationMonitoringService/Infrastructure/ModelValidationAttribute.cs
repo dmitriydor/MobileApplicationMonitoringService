@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MobileApplicationMonitoringService.Filters
 {
@@ -15,7 +11,7 @@ namespace MobileApplicationMonitoringService.Filters
             {
                 context.Result = new BadRequestObjectResult("Data object is null");
             }
-            if(context.HttpContext.Request.Body == null)
+            if (context.HttpContext.Request.Body == null)
             {
                 context.Result = new BadRequestObjectResult("Invalid model object");
             }

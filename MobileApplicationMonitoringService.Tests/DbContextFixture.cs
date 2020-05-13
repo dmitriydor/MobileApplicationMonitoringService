@@ -1,10 +1,10 @@
-﻿using System;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using MobileApplicationMonitoringService.Application.Data;
 using MobileApplicationMonitoringService.Application.Migrations;
 using MobileApplicationMonitoringService.Application.Models;
 using MobileApplicationMonitoringService.Application.Options;
 using MongoDB.Driver;
+using System;
 
 namespace MobileApplicationMonitoringService.Tests
 {

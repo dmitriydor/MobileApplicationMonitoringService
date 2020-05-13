@@ -1,8 +1,5 @@
 ﻿using MobileApplicationMonitoringService.Application.Models;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MobileApplicationMonitoringService.Application.Data
 {

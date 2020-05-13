@@ -1,16 +1,12 @@
-﻿using Mapster;
-using MapsterMapper;
+﻿using MapsterMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using MobileApplicationMonitoringService.Application.Data;
 using MobileApplicationMonitoringService.Application.Migrations;
-using MobileApplicationMonitoringService.Application.Models;
 using MobileApplicationMonitoringService.Application.Options;
-using MobileApplicationMonitoringService.Application.Repositories;
 using MobileApplicationMonitoringService.Infrastructure;
 using MobileApplicationMonitoringService.Services;
 using Serilog;
@@ -54,7 +50,7 @@ namespace MobileApplicationMonitoringService
             }
 
             UnitOfWorkFactory.ServiceProvider = app.ApplicationServices;
-            
+
             var runner = app.ApplicationServices.GetService<MigrationRunner>();
             try
             {
@@ -65,10 +61,10 @@ namespace MobileApplicationMonitoringService
                 Log.Logger.Error(e.Message);
                 throw e;
             }
-            
+
             app.UseOpenApi();
             app.UseSwaggerUi3();
-            app.UseCors(builder => builder.AllowAnyOrigin());
+            app.UseCors(builder => builder.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
             app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
             app.UseStaticFiles();

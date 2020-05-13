@@ -1,13 +1,9 @@
-﻿using MapsterMapper;
-using MobileApplicationMonitoringService.Application.Repositories;
+﻿using FluentAssertions;
+using MobileApplicationMonitoringService.Contracts.Requests;
+using MobileApplicationMonitoringService.Contracts.Responses;
 using MobileApplicationMonitoringService.Services;
 using System;
 using System.Collections.Generic;
-using FluentAssertions;
-using MobileApplicationMonitoringService.Application.Migrations;
-using MobileApplicationMonitoringService.Contracts.Requests;
-using MobileApplicationMonitoringService.Contracts.Responses;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
 namespace MobileApplicationMonitoringService.Tests
@@ -15,15 +11,16 @@ namespace MobileApplicationMonitoringService.Tests
     public class ApplicationStatisticsServiceTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
         private CustomWebApplicationFactory<Startup> factory;
-        public ApplicationStatisticsServiceTests(CustomWebApplicationFactory<Startup> factory) 
+        public ApplicationStatisticsServiceTests(CustomWebApplicationFactory<Startup> factory)
         {
             this.factory = factory;
         }
         [Fact]
-        public async void  SaveApplicationStatistics_ValidModel_ShouldSaveModel()
+        public async void SaveApplicationStatistics_ValidModel_ShouldSaveModel()
         {
             Guid id = Guid.NewGuid();
-            var request = new SaveApplicationStatisticsRequest() {
+            var request = new SaveApplicationStatisticsRequest()
+            {
                 Id = id,
                 AppVersion = "0.0.0",
                 OperationSystem = "windows",
@@ -44,7 +41,7 @@ namespace MobileApplicationMonitoringService.Tests
             };
             var applicationStatisticsService = (IApplicationStatisticsService)factory.Services.GetService(typeof(IApplicationStatisticsService));
             await applicationStatisticsService.SaveApplicationStatisticsAsync(request);
-            var result = 
+            var result =
                 await applicationStatisticsService.GetApplicationStatisticsByIdAsync(id);
             result.Should().BeOfType<ApplicationStatisticsResponse>().Which.Id.Should().Be(id);
         }
@@ -52,7 +49,8 @@ namespace MobileApplicationMonitoringService.Tests
         public async void DeleteApplicationStatistics_ValidModel_ShouldDeleteModel()
         {
             Guid id = Guid.NewGuid();
-            var request = new SaveApplicationStatisticsRequest() {
+            var request = new SaveApplicationStatisticsRequest()
+            {
                 Id = id,
                 AppVersion = "0.0.0",
                 OperationSystem = "windows",
@@ -77,6 +75,6 @@ namespace MobileApplicationMonitoringService.Tests
             var result =
                 await applicationStatisticsService.GetApplicationStatisticsByIdAsync(id);
             result.Should().BeNull();
-        }    
+        }
     }
 }

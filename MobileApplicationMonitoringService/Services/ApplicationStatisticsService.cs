@@ -1,4 +1,5 @@
 ﻿using MapsterMapper;
+using MobileApplicationMonitoringService.Application.Data;
 using MobileApplicationMonitoringService.Application.Models;
 using MobileApplicationMonitoringService.Application.Repositories;
 using MobileApplicationMonitoringService.Contracts.Requests;
@@ -6,7 +7,6 @@ using MobileApplicationMonitoringService.Contracts.Responses;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MobileApplicationMonitoringService.Application.Data;
 
 namespace MobileApplicationMonitoringService.Services
 {
@@ -84,6 +84,14 @@ namespace MobileApplicationMonitoringService.Services
             applicationStatistics.Events = await eventRepository.GetAllForAsync(id);
             uow.Commit();
             return applicationStatistics;
+        }
+
+        public async Task DeleteEventsByApplicationId(Guid id)
+        {
+            using var uow = UnitOfWorkFactory.CreateUnitOfWork();
+            var eventRepository = uow.GetRepository<ApplicationEventRepository>();
+            await eventRepository.DeleteAllForAsync(id);
+            uow.Commit();
         }
     }
 }

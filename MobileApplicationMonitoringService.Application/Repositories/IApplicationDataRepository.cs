@@ -1,7 +1,7 @@
-﻿using System;
+﻿using MobileApplicationMonitoringService.Application.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MobileApplicationMonitoringService.Application.Models;
 
 namespace MobileApplicationMonitoringService.Application.Repositories
 {

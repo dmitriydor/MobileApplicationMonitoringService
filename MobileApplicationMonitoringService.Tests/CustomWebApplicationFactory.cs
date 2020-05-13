@@ -14,11 +14,11 @@ namespace MobileApplicationMonitoringService.Tests
             builder.ConfigureServices(services =>
             {
                 var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IDbContext));
-                if(descriptor != null)
+                if (descriptor != null)
                 {
                     services.Remove(descriptor);
                 }
-                services.AddScoped<IDbContext,DbContextFixture>();
+                services.AddScoped<IDbContext, DbContextFixture>();
             });
         }
     }

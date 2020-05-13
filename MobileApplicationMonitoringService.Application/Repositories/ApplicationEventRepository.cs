@@ -1,10 +1,8 @@
 ﻿using MobileApplicationMonitoringService.Application.Data;
 using MobileApplicationMonitoringService.Application.Models;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MobileApplicationMonitoringService.Application.Repositories
@@ -26,19 +24,19 @@ namespace MobileApplicationMonitoringService.Application.Repositories
 
         public async Task CreateBatchAsync(IEnumerable<ApplicationEvent> events)
         {
-            await context.Events.InsertManyAsync(session,events);
+            await context.Events.InsertManyAsync(session, events);
         }
 
         public async Task DeleteAllForAsync(Guid applicationId)
         {
             var filter = Builders<ApplicationEvent>.Filter.Eq("ApplicationId", applicationId);
-            await context.Events.DeleteManyAsync(session,filter);
+            var result = await context.Events.DeleteManyAsync(session, filter);
         }
 
         public async Task<List<ApplicationEvent>> GetAllForAsync(Guid applicationId)
         {
             var filter = Builders<ApplicationEvent>.Filter.Eq("ApplicationId", applicationId);
-            var list = await context.Events.Find(session,filter).ToListAsync();
+            var list = await context.Events.Find(session, filter).ToListAsync();
             return list;
         }
 

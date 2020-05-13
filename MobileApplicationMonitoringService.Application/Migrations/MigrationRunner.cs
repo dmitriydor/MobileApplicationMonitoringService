@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using MobileApplicationMonitoringService.Application.Options;
 using MongoDB.Driver;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MobileApplicationMonitoringService.Application.Migrations
 {
     public class MigrationRunner
     {
-        private readonly IMongoDatabase db ;
+        private readonly IMongoDatabase db;
         private readonly MigrationLoader migrationLoader;
         public MigrationRunner(IOptions<MongoOptions> options)
         {
@@ -26,10 +26,10 @@ namespace MobileApplicationMonitoringService.Application.Migrations
                 }
                 catch (Exception e)
                 {
-                    
+
                     throw new Exception($"Migration failed to by applied: {e.Message} \n {migration.Version}, {migration.Description}, Name: {migration.GetType()}, Database: {db.ToString()}");
                 }
-                GetDbMigrations().InsertOne(new MigrationModel {Version = migration.Version, Description = migration.Description });
+                GetDbMigrations().InsertOne(new MigrationModel { Version = migration.Version, Description = migration.Description });
             }
         }
 
@@ -41,7 +41,7 @@ namespace MobileApplicationMonitoringService.Application.Migrations
         private MigrationModel GetLatestDbMigration()
         {
             var listDbMigrations = GetDbMigrations().Find(_ => true).ToList();
-            if(listDbMigrations.Count == 0)
+            if (listDbMigrations.Count == 0)
             {
                 return new MigrationModel();
             }
@@ -57,7 +57,7 @@ namespace MobileApplicationMonitoringService.Application.Migrations
             {
                 return;
             }
-            
+
             var currentMigration = GetLatestDbMigration();
             var unappliedMigrations = migrationLoader.GetUnappliedMigrations(currentMigration).Where(m => m.Version <= version);
             ApplyMigrations(unappliedMigrations);
@@ -67,6 +67,6 @@ namespace MobileApplicationMonitoringService.Application.Migrations
         {
             Update(migrationLoader.LatestVersion());
         }
-        
+
     }
 }

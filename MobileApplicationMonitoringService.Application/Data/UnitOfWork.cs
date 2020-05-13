@@ -1,14 +1,11 @@
-﻿using System;
+﻿using MongoDB.Driver;
+using System;
 using System.Linq;
 using System.Reflection;
-using Microsoft.Extensions.Options;
-using MobileApplicationMonitoringService.Application.Options;
-using MobileApplicationMonitoringService.Application.Repositories;
-using MongoDB.Driver;
 
 namespace MobileApplicationMonitoringService.Application.Data
 {
-    public class UnitOfWork:IDisposable 
+    public class UnitOfWork : IDisposable
     {
         private readonly IServiceProvider serviceProvider;
         private readonly IClientSessionHandle session;
@@ -16,9 +13,7 @@ namespace MobileApplicationMonitoringService.Application.Data
         public UnitOfWork(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
-            //---------------------
             session = new MongoClient("mongodb://localhost:27017").StartSession();
-            //---------------------
             session.StartTransaction();
         }
         private static ConstructorInfo GetConstructor<TImplementation>()
@@ -38,8 +33,8 @@ namespace MobileApplicationMonitoringService.Application.Data
         {
             var ctor = GetConstructor<T>();
             var ctorParameters = ctor.GetParameters();
-            Object[] param = ctorParameters.Select(x => 
-                    (x.ParameterType == typeof(IClientSessionHandle))? session : serviceProvider.GetService(x.ParameterType)).ToArray();
+            Object[] param = ctorParameters.Select(x =>
+                    (x.ParameterType == typeof(IClientSessionHandle)) ? session : serviceProvider.GetService(x.ParameterType)).ToArray();
             return (T)ctor.Invoke(param);
         }
         public void Commit()
@@ -49,6 +44,7 @@ namespace MobileApplicationMonitoringService.Application.Data
 
         public void Dispose()
         {
+            session.Dispose();
         }
     }
 }
