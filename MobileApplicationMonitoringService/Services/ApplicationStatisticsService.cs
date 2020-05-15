@@ -6,6 +6,7 @@ using MobileApplicationMonitoringService.Contracts.Requests;
 using MobileApplicationMonitoringService.Contracts.Responses;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MobileApplicationMonitoringService.Services
@@ -21,15 +22,26 @@ namespace MobileApplicationMonitoringService.Services
         {
             using var uow = UnitOfWorkFactory.CreateUnitOfWork();
 
-            var applicationRepository = uow.GetRepository<ApplicationDataRepository>();
-            var eventRepository = uow.GetRepository<ApplicationEventRepository>();
+            var applicationRepository = uow.GetRepository<ApplicationsRepository>();
+            var eventRepository = uow.GetRepository<EventsRepository>();
+            var eventDescriptionsRepository = uow.GetRepository<EventDescriptionsRepository>();
 
+            var eventsWithoutDescription = mapper.Map<List<EventDescription>>(request.Events).Distinct();
+            if (eventsWithoutDescription != null)
+            {
+                foreach(var item in eventsWithoutDescription)
+                {
+                    var entryEvent = await eventDescriptionsRepository.GetByEventNameAsync(item.EventName);
+                    if(entryEvent == null)
+                        await eventDescriptionsRepository.UpsertEventAsync(item);
+                }
+            }
             var applicationData = mapper.Map<ApplicationData>(request);
             if (applicationData != null)
             {
                 await applicationRepository.UpsertAsync(applicationData);
             }
-            List<ApplicationEvent> applicationEvents = mapper.Map<List<ApplicationEvent>>(request.Events);
+            List<Event> applicationEvents = mapper.Map<List<Event>>(request.Events);
             if (applicationEvents != null)
             {
                 applicationEvents.ForEach(e => e.ApplicationId = applicationData.Id);
@@ -37,23 +49,21 @@ namespace MobileApplicationMonitoringService.Services
             }
             uow.Commit();
         }
-
         public async Task DeleteApplicationStatisticsAsync(Guid id)
         {
             using var uow = UnitOfWorkFactory.CreateUnitOfWork();
-            var applicationRepository = uow.GetRepository<ApplicationDataRepository>();
-            var eventRepository = uow.GetRepository<ApplicationEventRepository>();
+            var applicationRepository = uow.GetRepository<ApplicationsRepository>();
+            var eventRepository = uow.GetRepository<EventsRepository>();
 
             await eventRepository.DeleteAllForAsync(id);
             await applicationRepository.DeleteAsync(id);
             uow.Commit();
         }
-
         public async Task<List<ApplicationStatisticsResponse>> GetAllApplicationStatisticsAsync()
         {
             using var uow = UnitOfWorkFactory.CreateUnitOfWork();
-            var applicationRepository = uow.GetRepository<ApplicationDataRepository>();
-            var eventRepository = uow.GetRepository<ApplicationEventRepository>();
+            var applicationRepository = uow.GetRepository<ApplicationsRepository>();
+            var eventRepository = uow.GetRepository<EventsRepository>();
 
             var applicationData = await applicationRepository.GetAllAsync();
             if (applicationData == null)
@@ -69,12 +79,12 @@ namespace MobileApplicationMonitoringService.Services
             uow.Commit();
             return applicationStatistics;
         }
-
         public async Task<ApplicationStatisticsResponse> GetApplicationStatisticsByIdAsync(Guid id)
         {
             using var uow = UnitOfWorkFactory.CreateUnitOfWork();
-            var applicationRepository = uow.GetRepository<ApplicationDataRepository>();
-            var eventRepository = uow.GetRepository<ApplicationEventRepository>();
+            var applicationRepository = uow.GetRepository<ApplicationsRepository>();
+            var eventRepository = uow.GetRepository<EventsRepository>();
+            
             var applicationData = await applicationRepository.GetByIdAsync(id);
             if (applicationData == null)
             {
@@ -85,11 +95,10 @@ namespace MobileApplicationMonitoringService.Services
             uow.Commit();
             return applicationStatistics;
         }
-
         public async Task DeleteEventsByApplicationId(Guid id)
         {
             using var uow = UnitOfWorkFactory.CreateUnitOfWork();
-            var eventRepository = uow.GetRepository<ApplicationEventRepository>();
+            var eventRepository = uow.GetRepository<EventsRepository>();
             await eventRepository.DeleteAllForAsync(id);
             uow.Commit();
         }

@@ -39,7 +39,7 @@ namespace MobileApplicationMonitoringService.Controllers
             logger.Debug("A request for data about {@ApplicationStatistics}", applicationStatistics);
             return applicationStatistics;
         }
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/events")]
         public async Task DeleteEvents([FromRoute] Guid id)
         {
             var applicationStatistics = await statisticService.GetApplicationStatisticsByIdAsync(id);

@@ -12,12 +12,13 @@ namespace MobileApplicationMonitoringService.Application.Migrations
         {
             db.CreateCollection("Events");
             db.CreateCollection("Applications");
+            db.CreateCollection("Event-Descriptons");
 
-            var keyIdentificationId = Builders<ApplicationEvent>.IndexKeys.Ascending("ApplicationId");
-            var keyDate = Builders<ApplicationEvent>.IndexKeys.Ascending("Date");
-            db.GetCollection<ApplicationEvent>("Events").Indexes.CreateMany(new[] {
-                new CreateIndexModel<ApplicationEvent>(keyIdentificationId),
-                new CreateIndexModel<ApplicationEvent>(keyDate)
+            var keyIdentificationId = Builders<Event>.IndexKeys.Ascending("ApplicationId");
+            var keyDate = Builders<Event>.IndexKeys.Ascending("Date");
+            db.GetCollection<Event>("Events").Indexes.CreateMany(new[] {
+                new CreateIndexModel<Event>(keyIdentificationId),
+                new CreateIndexModel<Event>(keyDate)
             });
         }
     }

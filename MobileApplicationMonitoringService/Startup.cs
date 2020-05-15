@@ -9,6 +9,7 @@ using MobileApplicationMonitoringService.Application.Migrations;
 using MobileApplicationMonitoringService.Application.Options;
 using MobileApplicationMonitoringService.Infrastructure;
 using MobileApplicationMonitoringService.Services;
+using MongoDB.Driver;
 using Serilog;
 
 namespace MobileApplicationMonitoringService
@@ -26,6 +27,7 @@ namespace MobileApplicationMonitoringService
             services.AddSingleton<IMapper, Mapper>();
             services.AddScoped<IDbContext, DbContext>();
             services.AddSingleton<MigrationRunner>();
+            services.AddScoped<IEventService, EventService>();
             services.AddScoped<IApplicationStatisticsService, ApplicationStatisticsService>();
             services.AddSwaggerDocument(option =>
             {
@@ -39,6 +41,7 @@ namespace MobileApplicationMonitoringService
             {
                 options.ConnectionString = Configuration["MongoOptions:ConnectionString"];
                 options.Database = Configuration["MongoOptions:Database"];
+                options.MongoClient = new MongoClient(options.ConnectionString);
             });
         }
 
@@ -73,7 +76,7 @@ namespace MobileApplicationMonitoringService
             app.UseMiddleware<StatusCodeExceptionHandler>();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
             });
         }
     }

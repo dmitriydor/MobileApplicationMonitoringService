@@ -15,7 +15,10 @@ namespace MobileApplicationMonitoringService.Tests
         private readonly IMongoDatabase db;
         private readonly MigrationRunner runner;
         public IMongoCollection<ApplicationData> Applications => db.GetCollection<ApplicationData>("Applications");
-        public IMongoCollection<ApplicationEvent> Events => db.GetCollection<ApplicationEvent>("Events");
+        public IMongoCollection<Event> Events => db.GetCollection<Event>("Events");
+
+        public IMongoCollection<EventDescription> EventDescriptions =>
+            db.GetCollection<EventDescription>("Event-Descriptions");
 
         public DbContextFixture()
         {
