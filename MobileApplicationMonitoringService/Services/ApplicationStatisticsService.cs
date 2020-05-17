@@ -59,23 +59,17 @@ namespace MobileApplicationMonitoringService.Services
             await applicationRepository.DeleteAsync(id);
             uow.Commit();
         }
-        public async Task<List<ApplicationStatisticsResponse>> GetAllApplicationStatisticsAsync()
+        public async Task<List<ApplicationResponse>> GetAllApplicationsAsync()
         {
             using var uow = UnitOfWorkFactory.CreateUnitOfWork();
             var applicationRepository = uow.GetRepository<ApplicationsRepository>();
-            var eventRepository = uow.GetRepository<EventsRepository>();
 
             var applicationData = await applicationRepository.GetAllAsync();
             if (applicationData == null)
             {
                 return null;
             }
-
-            var applicationStatistics = mapper.Map<List<ApplicationStatisticsResponse>>(applicationData);
-            foreach (var app in applicationStatistics)
-            {
-                app.Events = await eventRepository.GetAllForAsync(app.Id);
-            }
+            var applicationStatistics = mapper.Map<List<ApplicationResponse>>(applicationData);
             uow.Commit();
             return applicationStatistics;
         }

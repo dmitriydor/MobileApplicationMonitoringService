@@ -10,7 +10,7 @@ namespace MobileApplicationMonitoringService.Services
     {
         Task SaveApplicationStatisticsAsync(SaveApplicationStatisticsRequest request);
         Task DeleteApplicationStatisticsAsync(Guid id);
-        Task<List<ApplicationStatisticsResponse>> GetAllApplicationStatisticsAsync();
+        Task<List<ApplicationResponse>> GetAllApplicationsAsync();
         Task<ApplicationStatisticsResponse> GetApplicationStatisticsByIdAsync(Guid id);
         Task DeleteEventsByApplicationId(Guid id);
     }

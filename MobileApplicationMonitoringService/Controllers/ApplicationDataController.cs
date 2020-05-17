@@ -21,10 +21,10 @@ namespace MobileApplicationMonitoringService.Controllers
         }
 
         [HttpGet]
-        public async Task<List<ApplicationStatisticsResponse>> Get()
+        public async Task<List<ApplicationResponse>> Get()
         {
             logger.Debug("There was a request to receive all application data");
-            return await statisticService.GetAllApplicationStatisticsAsync();
+            return await statisticService.GetAllApplicationsAsync();
         }
 
         [HttpGet("{id}")]

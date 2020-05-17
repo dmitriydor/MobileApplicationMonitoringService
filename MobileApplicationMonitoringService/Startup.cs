@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using MobileApplicationMonitoringService.Application.Data;
 using MobileApplicationMonitoringService.Application.Migrations;
 using MobileApplicationMonitoringService.Application.Options;
@@ -53,6 +54,8 @@ namespace MobileApplicationMonitoringService
             }
 
             UnitOfWorkFactory.ServiceProvider = app.ApplicationServices;
+            UnitOfWorkFactory.Options = app.ApplicationServices.GetService<IOptions<MongoOptions>>();
+            
 
             var runner = app.ApplicationServices.GetService<MigrationRunner>();
             try
