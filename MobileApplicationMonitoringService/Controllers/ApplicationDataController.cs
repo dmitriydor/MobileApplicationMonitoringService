@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using MapsterMapper;
-using Microsoft.AspNetCore.Mvc;
-using MobileApplicationMonitoringService.Application.Models;
-using MobileApplicationMonitoringService.Application.Repositories;
-using MobileApplicationMonitoringService.Contracts;
+﻿using Microsoft.AspNetCore.Mvc;
 using MobileApplicationMonitoringService.Contracts.Responses;
 using MobileApplicationMonitoringService.Exceptions;
 using MobileApplicationMonitoringService.Services;
 using Serilog;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MobileApplicationMonitoringService.Controllers
 {
     [ApiController]
     [Route("api/application")]
-    public class ApplicationDataController:Controller
+    public class ApplicationDataController : Controller
     {
         private static readonly ILogger logger = Log.ForContext<ApplicationDataController>();
         private readonly IApplicationStatisticsService statisticService;
@@ -25,10 +21,10 @@ namespace MobileApplicationMonitoringService.Controllers
         }
 
         [HttpGet]
-        public async Task<List<ApplicationStatisticsResponse>> Get()
+        public async Task<List<ApplicationResponse>> Get()
         {
             logger.Debug("There was a request to receive all application data");
-            return await statisticService.GetAllApplicationStatisticsAsync();
+            return await statisticService.GetAllApplicationsAsync();
         }
 
         [HttpGet("{id}")]
@@ -42,6 +38,18 @@ namespace MobileApplicationMonitoringService.Controllers
             }
             logger.Debug("A request for data about {@ApplicationStatistics}", applicationStatistics);
             return applicationStatistics;
+        }
+        [HttpDelete("{id}/events")]
+        public async Task DeleteEvents([FromRoute] Guid id)
+        {
+            var applicationStatistics = await statisticService.GetApplicationStatisticsByIdAsync(id);
+            if (applicationStatistics == null)
+            {
+                logger.Error("Data to delete not found");
+                throw new StatusCodeException(System.Net.HttpStatusCode.NotFound);
+            }
+            logger.Debug("A request to delete data about {@ApplicationStatistics}", applicationStatistics);
+            await statisticService.DeleteEventsByApplicationIdAsync(id);
         }
     }
 }

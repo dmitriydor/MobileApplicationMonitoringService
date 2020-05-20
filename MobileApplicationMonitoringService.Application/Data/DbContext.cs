@@ -2,9 +2,6 @@
 using MobileApplicationMonitoringService.Application.Models;
 using MobileApplicationMonitoringService.Application.Options;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MobileApplicationMonitoringService.Application.Data
 {
@@ -12,10 +9,12 @@ namespace MobileApplicationMonitoringService.Application.Data
     {
         private readonly IMongoDatabase db;
         public IMongoCollection<ApplicationData> Applications => db.GetCollection<ApplicationData>("Applications");
-        public IMongoCollection<ApplicationEvent> Events => db.GetCollection<ApplicationEvent>("Events");
-        public DbContext(IOptions<MongoOptions> options)
+        public IMongoCollection<Event> Events => db.GetCollection<Event>("Events");
+        public IMongoCollection<EventDescription> EventDescriptions => db.GetCollection<EventDescription>("EventDescriptons");
+
+        public DbContext(IMongoDatabase mongoDatabase)
         {
-            db = new MongoClient(options.Value.ConnectionString).GetDatabase(options.Value.Database);
+            db = mongoDatabase;
         }
     }
 }

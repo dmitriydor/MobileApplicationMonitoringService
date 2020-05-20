@@ -20,13 +20,13 @@ namespace MobileApplicationMonitoringService.Application.Migrations
         private void LoadMigrations()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
-             migrations.AddRange(assemblies
-                 .SelectMany(a => a.DefinedTypes
-                     .Where(t =>t.ImplementedInterfaces.Contains(typeof(IMigration)) && !t.IsAbstract  )
-                     .Select(t => Activator.CreateInstance(t.AsType()))
-                     .OfType<IMigration>())
-                 .OrderBy(m => m.Version)
-             ); 
+            migrations.AddRange(assemblies
+                .SelectMany(a => a.DefinedTypes
+                    .Where(t => t.ImplementedInterfaces.Contains(typeof(IMigration)) && !t.IsAbstract)
+                    .Select(t => Activator.CreateInstance(t.AsType()))
+                    .OfType<IMigration>())
+                .OrderBy(m => m.Version)
+            );
         }
 
         public Version LatestVersion()
@@ -43,6 +43,6 @@ namespace MobileApplicationMonitoringService.Application.Migrations
 
             return null;
         }
-        
+
     }
 }

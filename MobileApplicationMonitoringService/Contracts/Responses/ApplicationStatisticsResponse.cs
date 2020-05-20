@@ -11,6 +11,6 @@ namespace MobileApplicationMonitoringService.Contracts.Responses
         public DateTime Date { get; set; }
         public string OperationSystem { get; set; }
         public string AppVersion { get; set; }
-        public List<ApplicationEvent> Events { get; set; }
+        public List<EventWithDescription> Events { get; set; }
     }
 }

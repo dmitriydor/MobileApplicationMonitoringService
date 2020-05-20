@@ -1,5 +1,4 @@
-﻿using Mapster;
-using MapsterMapper;
+﻿using MapsterMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,11 +7,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using MobileApplicationMonitoringService.Application.Data;
 using MobileApplicationMonitoringService.Application.Migrations;
-using MobileApplicationMonitoringService.Application.Models;
 using MobileApplicationMonitoringService.Application.Options;
-using MobileApplicationMonitoringService.Application.Repositories;
 using MobileApplicationMonitoringService.Infrastructure;
 using MobileApplicationMonitoringService.Services;
+using MongoDB.Driver;
 using Serilog;
 
 namespace MobileApplicationMonitoringService
@@ -27,9 +25,17 @@ namespace MobileApplicationMonitoringService
         private IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<MongoOptions>(Configuration.GetSection("MongoOptions"));
             services.AddSingleton<IMapper, Mapper>();
             services.AddScoped<IDbContext, DbContext>();
             services.AddSingleton<MigrationRunner>();
+            services.AddSingleton<IMongoDatabase>(serviceProvider =>
+            {
+                var mongoOptions = serviceProvider.GetService<IOptions<MongoOptions>>();
+                return new MongoClient(mongoOptions.Value.ConnectionString).GetDatabase(mongoOptions.Value.Database);
+            });
+            services.AddSingleton<UnitOfWorkFactory>();
+            services.AddScoped<IEventService, EventService>();
             services.AddScoped<IApplicationStatisticsService, ApplicationStatisticsService>();
             services.AddSwaggerDocument(option =>
             {
@@ -39,22 +45,13 @@ namespace MobileApplicationMonitoringService
             });
             services.AddCors();
             services.AddControllers();
-            services.Configure<MongoOptions>(options =>
-            {
-                options.ConnectionString = Configuration["MongoOptions:ConnectionString"];
-                options.Database = Configuration["MongoOptions:Database"];
-            });
         }
-
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            UnitOfWorkFactory.ServiceProvider = app.ApplicationServices;
-            
             var runner = app.ApplicationServices.GetService<MigrationRunner>();
             try
             {
@@ -65,10 +62,9 @@ namespace MobileApplicationMonitoringService
                 Log.Logger.Error(e.Message);
                 throw e;
             }
-            
             app.UseOpenApi();
             app.UseSwaggerUi3();
-            app.UseCors(builder => builder.AllowAnyOrigin());
+            app.UseCors(builder => builder.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
             app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -77,7 +73,7 @@ namespace MobileApplicationMonitoringService
             app.UseMiddleware<StatusCodeExceptionHandler>();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
             });
         }
     }

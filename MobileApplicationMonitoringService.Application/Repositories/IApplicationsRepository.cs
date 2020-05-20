@@ -1,11 +1,11 @@
-﻿using System;
+﻿using MobileApplicationMonitoringService.Application.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MobileApplicationMonitoringService.Application.Models;
 
 namespace MobileApplicationMonitoringService.Application.Repositories
 {
-    public interface IApplicationDataRepository
+    public interface IApplicationsRepository
     {
         public Task<List<ApplicationData>> GetAllAsync();
         public Task<ApplicationData> GetByIdAsync(Guid id);

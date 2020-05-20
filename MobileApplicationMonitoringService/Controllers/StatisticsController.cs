@@ -1,6 +1,4 @@
-﻿using MapsterMapper;
-using Microsoft.AspNetCore.Mvc;
-using MobileApplicationMonitoringService.Contracts;
+﻿using Microsoft.AspNetCore.Mvc;
 using MobileApplicationMonitoringService.Contracts.Requests;
 using MobileApplicationMonitoringService.Exceptions;
 using MobileApplicationMonitoringService.Filters;
@@ -13,7 +11,7 @@ namespace MobileApplicationMonitoringService.Controllers
 {
     [ApiController]
     [Route("api/statistics")]
-    public class StatisticsController:Controller
+    public class StatisticsController : Controller
     {
         private readonly IApplicationStatisticsService statisticService;
         private static readonly ILogger logger = Log.ForContext<StatisticsController>();

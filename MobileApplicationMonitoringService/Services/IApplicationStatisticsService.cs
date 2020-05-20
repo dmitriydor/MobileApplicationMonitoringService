@@ -1,5 +1,4 @@
-﻿using MobileApplicationMonitoringService.Application.Models;
-using MobileApplicationMonitoringService.Contracts.Requests;
+﻿using MobileApplicationMonitoringService.Contracts.Requests;
 using MobileApplicationMonitoringService.Contracts.Responses;
 using System;
 using System.Collections.Generic;
@@ -11,7 +10,8 @@ namespace MobileApplicationMonitoringService.Services
     {
         Task SaveApplicationStatisticsAsync(SaveApplicationStatisticsRequest request);
         Task DeleteApplicationStatisticsAsync(Guid id);
-        Task<List<ApplicationStatisticsResponse>> GetAllApplicationStatisticsAsync();
+        Task<List<ApplicationResponse>> GetAllApplicationsAsync();
         Task<ApplicationStatisticsResponse> GetApplicationStatisticsByIdAsync(Guid id);
+        Task DeleteEventsByApplicationIdAsync(Guid id);
     }
 }
