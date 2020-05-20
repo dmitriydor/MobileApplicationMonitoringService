@@ -29,6 +29,7 @@ namespace MobileApplicationMonitoringService
             services.AddScoped<IDbContext, DbContext>();
             services.AddSingleton<MigrationRunner>();
             services.AddSingleton<MongoClientSingleton>();
+            services.AddSingleton<UnitOfWorkFactory>();
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IApplicationStatisticsService, ApplicationStatisticsService>();
             services.AddSwaggerDocument(option =>
@@ -47,8 +48,6 @@ namespace MobileApplicationMonitoringService
             {
                 app.UseDeveloperExceptionPage();
             }
-            UnitOfWorkFactory.ServiceProvider = app.ApplicationServices;
-            UnitOfWorkFactory.MongoClient = app.ApplicationServices.GetService<MongoClientSingleton>();
             var runner = app.ApplicationServices.GetService<MigrationRunner>();
             try
             {

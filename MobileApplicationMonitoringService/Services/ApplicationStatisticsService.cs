@@ -14,13 +14,15 @@ namespace MobileApplicationMonitoringService.Services
     public class ApplicationStatisticsService : IApplicationStatisticsService
     {
         private readonly IMapper mapper;
-        public ApplicationStatisticsService(IMapper mapper)
+        private readonly UnitOfWorkFactory unitOfWorkFactory;
+        public ApplicationStatisticsService(IMapper mapper, UnitOfWorkFactory unitOfWorkFactory)
         {
             this.mapper = mapper;
+            this.unitOfWorkFactory = unitOfWorkFactory;
         }
         public async Task SaveApplicationStatisticsAsync(SaveApplicationStatisticsRequest request)
         {
-            using var uow = UnitOfWorkFactory.CreateUnitOfWork();
+            using var uow = unitOfWorkFactory.CreateUnitOfWork();
 
             var applicationRepository = uow.GetRepository<ApplicationsRepository>();
             var eventRepository = uow.GetRepository<EventsRepository>();
@@ -51,7 +53,7 @@ namespace MobileApplicationMonitoringService.Services
         }
         public async Task DeleteApplicationStatisticsAsync(Guid id)
         {
-            using var uow = UnitOfWorkFactory.CreateUnitOfWork();
+            using var uow = unitOfWorkFactory.CreateUnitOfWork();
             var applicationRepository = uow.GetRepository<ApplicationsRepository>();
             var eventRepository = uow.GetRepository<EventsRepository>();
 
@@ -61,7 +63,7 @@ namespace MobileApplicationMonitoringService.Services
         }
         public async Task<List<ApplicationResponse>> GetAllApplicationsAsync()
         {
-            using var uow = UnitOfWorkFactory.CreateUnitOfWork();
+            using var uow = unitOfWorkFactory.CreateUnitOfWork();
             var applicationRepository = uow.GetRepository<ApplicationsRepository>();
 
             var applicationData = await applicationRepository.GetAllAsync();
@@ -75,7 +77,7 @@ namespace MobileApplicationMonitoringService.Services
         }
         public async Task<ApplicationStatisticsResponse> GetApplicationStatisticsByIdAsync(Guid id)
         {
-            using var uow = UnitOfWorkFactory.CreateUnitOfWork();
+            using var uow = unitOfWorkFactory.CreateUnitOfWork();
             var applicationRepository = uow.GetRepository<ApplicationsRepository>();
             var eventRepository = uow.GetRepository<EventsRepository>();
             
@@ -91,7 +93,7 @@ namespace MobileApplicationMonitoringService.Services
         }
         public async Task DeleteEventsByApplicationIdAsync(Guid id)
         {
-            using var uow = UnitOfWorkFactory.CreateUnitOfWork();
+            using var uow = unitOfWorkFactory.CreateUnitOfWork();
             var eventRepository = uow.GetRepository<EventsRepository>();
             await eventRepository.DeleteAllForAsync(id);
             uow.Commit();

@@ -1,17 +1,23 @@
 ﻿using Microsoft.Extensions.Options;
 using MobileApplicationMonitoringService.Application.Options;
 using System;
+using System.Dynamic;
 
 namespace MobileApplicationMonitoringService.Application.Data
 {
     public class UnitOfWorkFactory
     {
-        public static IServiceProvider ServiceProvider;
-        public static MongoClientSingleton MongoClient;
-
-        public static UnitOfWork CreateUnitOfWork()
+        private readonly IServiceProvider serviceProvider;
+        private readonly MongoClientSingleton mongoClient;
+        public UnitOfWorkFactory(IServiceProvider serviceProvider, MongoClientSingleton mongoClient)
         {
-            return new UnitOfWork(ServiceProvider, MongoClient);
+            this.serviceProvider = serviceProvider;
+            this.mongoClient = mongoClient;
+        }
+        
+        public UnitOfWork CreateUnitOfWork()
+        {
+            return new UnitOfWork(serviceProvider, mongoClient);
         }
     }
 }

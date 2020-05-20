@@ -8,9 +8,14 @@ namespace MobileApplicationMonitoringService.Services
 {
     public class EventService : IEventService
     {
+        private readonly UnitOfWorkFactory unitOfWorkFactory;
+        public EventService(UnitOfWorkFactory unitOfWorkFactory)
+        {
+            this.unitOfWorkFactory = unitOfWorkFactory;
+        }
         public async Task<List<EventDescription>> GetAllEventsAsync()
         {
-            using var uow = UnitOfWorkFactory.CreateUnitOfWork();
+            using var uow = unitOfWorkFactory.CreateUnitOfWork();
             var eventDescriptionsRepository = uow.GetRepository<EventDescriptionsRepository>();
             var eventDescriptions = await eventDescriptionsRepository.GetAllEvensAsync();
             uow.Commit();
@@ -18,7 +23,7 @@ namespace MobileApplicationMonitoringService.Services
         }
         public async Task UpdateBatchEventAsync(IEnumerable<EventDescription> eventDescriptions)
         {
-            using var uow = UnitOfWorkFactory.CreateUnitOfWork();
+            using var uow = unitOfWorkFactory.CreateUnitOfWork();
             var eventDescriptionsRepository = uow.GetRepository<EventDescriptionsRepository>();
             await eventDescriptionsRepository.UpdateBatchEventAsync(eventDescriptions);
             uow.Commit();
