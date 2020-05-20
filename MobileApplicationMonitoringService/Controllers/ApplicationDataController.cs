@@ -49,7 +49,7 @@ namespace MobileApplicationMonitoringService.Controllers
                 throw new StatusCodeException(System.Net.HttpStatusCode.NotFound);
             }
             logger.Debug("A request to delete data about {@ApplicationStatistics}", applicationStatistics);
-            await statisticService.DeleteEventsByApplicationId(id);
+            await statisticService.DeleteEventsByApplicationIdAsync(id);
         }
     }
 }

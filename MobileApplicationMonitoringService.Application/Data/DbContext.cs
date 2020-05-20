@@ -10,11 +10,11 @@ namespace MobileApplicationMonitoringService.Application.Data
         private readonly IMongoDatabase db;
         public IMongoCollection<ApplicationData> Applications => db.GetCollection<ApplicationData>("Applications");
         public IMongoCollection<Event> Events => db.GetCollection<Event>("Events");
-        public IMongoCollection<EventDescription> EventDescriptions => db.GetCollection<EventDescription>("Event-Descriptons");
+        public IMongoCollection<EventDescription> EventDescriptions => db.GetCollection<EventDescription>("EventDescriptons");
 
-        public DbContext(IOptions<MongoOptions> options)
+        public DbContext(MongoClientSingleton mongoClient)
         {
-            db = new MongoClient(options.Value.ConnectionString).GetDatabase(options.Value.Database);
+            db = mongoClient.Database;
         }
     }
 }

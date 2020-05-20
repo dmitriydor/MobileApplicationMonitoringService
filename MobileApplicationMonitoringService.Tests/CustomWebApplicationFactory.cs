@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MobileApplicationMonitoringService.Application.Data;
+using MobileApplicationMonitoringService.Application.Options;
 using System.Linq;
+using Xunit;
 
 namespace MobileApplicationMonitoringService.Tests
 {
@@ -19,6 +23,11 @@ namespace MobileApplicationMonitoringService.Tests
                     services.Remove(descriptor);
                 }
                 services.AddScoped<IDbContext, DbContextFixture>();
+                services.Configure<MongoOptions>(options =>
+                {
+                    options.ConnectionString = "mongodb://localhost:27017";
+                    options.Database = "test";
+                });
             });
         }
     }

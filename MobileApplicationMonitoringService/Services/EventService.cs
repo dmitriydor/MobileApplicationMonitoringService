@@ -16,26 +16,11 @@ namespace MobileApplicationMonitoringService.Services
             uow.Commit();
             return eventDescriptions;
         }
-        public async Task AddEventAsync(EventDescription eventDescription) 
+        public async Task UpdateBatchEventAsync(IEnumerable<EventDescription> eventDescriptions)
         {
             using var uow = UnitOfWorkFactory.CreateUnitOfWork();
             var eventDescriptionsRepository = uow.GetRepository<EventDescriptionsRepository>();
-            var entryEvent = await eventDescriptionsRepository.GetByEventNameAsync(eventDescription.EventName);
-            if(entryEvent == null)
-            {
-                await eventDescriptionsRepository.UpsertEventAsync(eventDescription);
-            }
-            uow.Commit();
-        }
-        public async Task UpdateEventAsync(EventDescription eventDescription)
-        {
-            using var uow = UnitOfWorkFactory.CreateUnitOfWork();
-            var eventDescriptionsRepository = uow.GetRepository<EventDescriptionsRepository>();
-            var entryEvent = await eventDescriptionsRepository.GetByEventNameAsync(eventDescription.EventName);
-            if (entryEvent != null)
-            {
-                await eventDescriptionsRepository.UpsertEventAsync(eventDescription);
-            }
+            await eventDescriptionsRepository.UpdateBatchEventAsync(eventDescriptions);
             uow.Commit();
         }
     }

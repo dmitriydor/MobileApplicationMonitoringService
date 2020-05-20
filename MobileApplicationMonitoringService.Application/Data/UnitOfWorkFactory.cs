@@ -7,11 +7,11 @@ namespace MobileApplicationMonitoringService.Application.Data
     public class UnitOfWorkFactory
     {
         public static IServiceProvider ServiceProvider;
-        public static IOptions<MongoOptions> Options;
+        public static MongoClientSingleton MongoClient;
 
         public static UnitOfWork CreateUnitOfWork()
         {
-            return new UnitOfWork(ServiceProvider, Options);
+            return new UnitOfWork(ServiceProvider, MongoClient);
         }
     }
 }

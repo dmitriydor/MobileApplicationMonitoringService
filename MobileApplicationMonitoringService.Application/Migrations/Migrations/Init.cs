@@ -12,7 +12,6 @@ namespace MobileApplicationMonitoringService.Application.Migrations
         {
             db.CreateCollection("Events");
             db.CreateCollection("Applications");
-            db.CreateCollection("Event-Descriptons");
 
             var keyIdentificationId = Builders<Event>.IndexKeys.Ascending("ApplicationId");
             var keyDate = Builders<Event>.IndexKeys.Ascending("Date");

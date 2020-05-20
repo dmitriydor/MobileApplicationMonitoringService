@@ -16,15 +16,22 @@ namespace MobileApplicationMonitoringService.Application.Repositories
             this.session = session;
             this.context = context;
         }
-
-        public async Task UpsertEventAsync (EventDescription eventDescription)
+        public async Task AddBatchEventAsync(IEnumerable<EventDescription> eventDescriptions)
         {
-            var filter = Builders<EventDescription>.Filter.Eq("EventName", eventDescription.EventName);
-            await context.EventDescriptions.FindOneAndReplaceAsync(session, filter, eventDescription, 
-                new FindOneAndReplaceOptions<EventDescription>
-                {
-                    IsUpsert = true
-                });
+            var listEventDescription = (await context.EventDescriptions.Find(_ => true).ToListAsync()).Select(x => x.EventName);
+            var list = eventDescriptions.Where(x => !listEventDescription.Contains(x.EventName));
+            await context.EventDescriptions.InsertManyAsync(list);
+        }
+        public async Task UpdateBatchEventAsync (IEnumerable<EventDescription> eventDescriptions)
+        {
+            //TODO: переделать без цикла 
+            foreach(EventDescription eventDescription in eventDescriptions)
+            {
+                var filter = Builders<EventDescription>.Filter.Eq(f => f.EventName, eventDescription.EventName);
+                var upsert = Builders<EventDescription>.Update
+                    .Set(f => f.Description, eventDescription.Description);
+                await context.EventDescriptions.FindOneAndUpdateAsync(session, filter,upsert, new FindOneAndUpdateOptions<EventDescription>{ IsUpsert = true});
+            }
         }
 
         public async Task<List<EventDescription>> GetAllEvensAsync()
@@ -33,7 +40,7 @@ namespace MobileApplicationMonitoringService.Application.Repositories
         }
         public async Task<EventDescription> GetByEventNameAsync(string eventName)
         {
-            var fileter = Builders<EventDescription>.Filter.Eq("EventName", eventName);
+            var fileter = Builders<EventDescription>.Filter.Eq(f => f.EventName, eventName);
             return await context.EventDescriptions.Find(session, fileter).FirstOrDefaultAsync();
         }
     }

@@ -9,7 +9,6 @@ namespace MobileApplicationMonitoringService.Services
     public interface IEventService
     {
         public Task<List<EventDescription>> GetAllEventsAsync();
-        public Task AddEventAsync(EventDescription eventDescription);
-        public Task UpdateEventAsync(EventDescription eventDescription);
+        public Task UpdateBatchEventAsync(IEnumerable<EventDescription> eventDescriptions);
     }
 }

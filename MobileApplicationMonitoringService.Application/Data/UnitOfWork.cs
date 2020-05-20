@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using MobileApplicationMonitoringService.Application.Options;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -12,10 +10,10 @@ namespace MobileApplicationMonitoringService.Application.Data
         private readonly IServiceProvider serviceProvider;
         private readonly IClientSessionHandle session;
 
-        public UnitOfWork(IServiceProvider serviceProvider, IOptions<MongoOptions> mongoOptions)
+        public UnitOfWork(IServiceProvider serviceProvider, MongoClientSingleton mongoClient)
         {
             this.serviceProvider = serviceProvider;
-            session = mongoOptions.Value.MongoClient.StartSession();
+            session = mongoClient.Client.StartSession();
             session.StartTransaction();
         }
         private static ConstructorInfo GetConstructor<TImplementation>()

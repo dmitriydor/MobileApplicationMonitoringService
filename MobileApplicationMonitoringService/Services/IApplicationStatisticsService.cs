@@ -12,6 +12,6 @@ namespace MobileApplicationMonitoringService.Services
         Task DeleteApplicationStatisticsAsync(Guid id);
         Task<List<ApplicationResponse>> GetAllApplicationsAsync();
         Task<ApplicationStatisticsResponse> GetApplicationStatisticsByIdAsync(Guid id);
-        Task DeleteEventsByApplicationId(Guid id);
+        Task DeleteEventsByApplicationIdAsync(Guid id);
     }
 }

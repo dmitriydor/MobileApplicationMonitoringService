@@ -28,6 +28,7 @@ namespace MobileApplicationMonitoringService
             services.AddSingleton<IMapper, Mapper>();
             services.AddScoped<IDbContext, DbContext>();
             services.AddSingleton<MigrationRunner>();
+            services.AddSingleton<MongoClientSingleton>();
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IApplicationStatisticsService, ApplicationStatisticsService>();
             services.AddSwaggerDocument(option =>
@@ -38,25 +39,16 @@ namespace MobileApplicationMonitoringService
             });
             services.AddCors();
             services.AddControllers();
-            services.Configure<MongoOptions>(options =>
-            {
-                options.ConnectionString = Configuration["MongoOptions:ConnectionString"];
-                options.Database = Configuration["MongoOptions:Database"];
-                options.MongoClient = new MongoClient(options.ConnectionString);
-            });
+            services.Configure<MongoOptions>(Configuration.GetSection("MongoOptions"));
         }
-
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
             UnitOfWorkFactory.ServiceProvider = app.ApplicationServices;
-            UnitOfWorkFactory.Options = app.ApplicationServices.GetService<IOptions<MongoOptions>>();
-            
-
+            UnitOfWorkFactory.MongoClient = app.ApplicationServices.GetService<MongoClientSingleton>();
             var runner = app.ApplicationServices.GetService<MigrationRunner>();
             try
             {
@@ -67,7 +59,6 @@ namespace MobileApplicationMonitoringService
                 Log.Logger.Error(e.Message);
                 throw e;
             }
-
             app.UseOpenApi();
             app.UseSwaggerUi3();
             app.UseCors(builder => builder.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());

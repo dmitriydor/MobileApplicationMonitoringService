@@ -26,15 +26,15 @@ namespace MobileApplicationMonitoringService.Services
             var eventRepository = uow.GetRepository<EventsRepository>();
             var eventDescriptionsRepository = uow.GetRepository<EventDescriptionsRepository>();
 
-            var eventsWithoutDescription = mapper.Map<List<EventDescription>>(request.Events).Distinct();
-            if (eventsWithoutDescription != null)
+            var eventNames = mapper.Map<List<EventDescription>>(request.Events).Select(x=>x.EventName).Distinct();
+            if (eventNames != null)
             {
-                foreach(var item in eventsWithoutDescription)
+                var eventDescriptions = new List<EventDescription>();
+                foreach(var eventName in eventNames)
                 {
-                    var entryEvent = await eventDescriptionsRepository.GetByEventNameAsync(item.EventName);
-                    if(entryEvent == null)
-                        await eventDescriptionsRepository.UpsertEventAsync(item);
+                    eventDescriptions.Add(new EventDescription { EventName = eventName });
                 }
+                await eventDescriptionsRepository.AddBatchEventAsync(eventDescriptions);
             }
             var applicationData = mapper.Map<ApplicationData>(request);
             if (applicationData != null)
@@ -89,7 +89,7 @@ namespace MobileApplicationMonitoringService.Services
             uow.Commit();
             return applicationStatistics;
         }
-        public async Task DeleteEventsByApplicationId(Guid id)
+        public async Task DeleteEventsByApplicationIdAsync(Guid id)
         {
             using var uow = UnitOfWorkFactory.CreateUnitOfWork();
             var eventRepository = uow.GetRepository<EventsRepository>();

@@ -32,7 +32,7 @@ namespace MobileApplicationMonitoringService.Application.Repositories
 
         public async Task DeleteAllForAsync(Guid applicationId)
         {
-            var filter = Builders<Event>.Filter.Eq("ApplicationId", applicationId);
+            var filter = Builders<Event>.Filter.Eq(f => f.ApplicationId, applicationId);
             var result = await context.Events.DeleteManyAsync(session, filter);
         }
 

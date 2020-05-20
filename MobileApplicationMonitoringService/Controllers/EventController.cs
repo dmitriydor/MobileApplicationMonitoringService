@@ -29,10 +29,7 @@ namespace MobileApplicationMonitoringService.Controllers
         public async Task AddEventDescriptions(List<EventDescription> descriptions)
         {
             logger.Debug("A request to create data about {@EventDescriptions}", descriptions);
-            foreach (var description in descriptions)
-            {
-                await eventService.UpdateEventAsync(description);
-            }
+            await eventService.UpdateBatchEventAsync(descriptions);
         }
     }
 }

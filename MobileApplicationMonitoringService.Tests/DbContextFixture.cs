@@ -13,25 +13,18 @@ namespace MobileApplicationMonitoringService.Tests
         private MongoOptions options = new MongoOptions();
         private readonly IMongoClient dbClient;
         private readonly IMongoDatabase db;
-        private readonly MigrationRunner runner;
         public IMongoCollection<ApplicationData> Applications => db.GetCollection<ApplicationData>("Applications");
         public IMongoCollection<Event> Events => db.GetCollection<Event>("Events");
-
-        public IMongoCollection<EventDescription> EventDescriptions =>
-            db.GetCollection<EventDescription>("Event-Descriptions");
+        public IMongoCollection<EventDescription> EventDescriptions => db.GetCollection<EventDescription>("EventDescriptons");
 
         public DbContextFixture()
         {
-            options.Database = "monitoringdb";
-            options.ConnectionString = "mongodb://localhost:27017";
-            runner = new MigrationRunner(new OptionsWrapper<MongoOptions>(options));
-            runner.UpdateToLatestMigration();
-            dbClient = new MongoClient(options.ConnectionString);
-            db = dbClient.GetDatabase(options.Database);
+            dbClient = new MongoClient("mongodb://localhost:27017");
+            db = dbClient.GetDatabase("test");
         }
         public void Dispose()
         {
-            dbClient.DropDatabase(options.Database);
+            dbClient.DropDatabase("test");
         }
 
     }
