@@ -22,16 +22,14 @@ namespace MobileApplicationMonitoringService.Application.Repositories
             var list = eventDescriptions.Where(x => !listEventDescription.Contains(x.EventName));
             await context.EventDescriptions.InsertManyAsync(list);
         }
-        public async Task UpdateBatchEventAsync (IEnumerable<EventDescription> eventDescriptions)
+        public async Task UpdateBatchEventAsync(IEnumerable<EventDescription> eventDescriptions)
         {
-            //TODO: переделать без цикла 
-            foreach(EventDescription eventDescription in eventDescriptions)
+            IEnumerable<ReplaceOneModel<EventDescription>> bulkOperations = eventDescriptions.Select(x => new ReplaceOneModel<EventDescription>(
+            Builders<EventDescription>.Filter.Eq(e => e.EventName, x.EventName), x)
             {
-                var filter = Builders<EventDescription>.Filter.Eq(f => f.EventName, eventDescription.EventName);
-                var upsert = Builders<EventDescription>.Update
-                    .Set(f => f.Description, eventDescription.Description);
-                await context.EventDescriptions.FindOneAndUpdateAsync(session, filter,upsert, new FindOneAndUpdateOptions<EventDescription>{ IsUpsert = true});
-            }
+                IsUpsert = true
+            });
+            await context.EventDescriptions.BulkWriteAsync(bulkOperations);
         }
 
         public async Task<List<EventDescription>> GetAllEvensAsync()
