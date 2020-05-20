@@ -25,10 +25,15 @@ namespace MobileApplicationMonitoringService
         private IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<MongoOptions>(Configuration.GetSection("MongoOptions"));
             services.AddSingleton<IMapper, Mapper>();
             services.AddScoped<IDbContext, DbContext>();
             services.AddSingleton<MigrationRunner>();
-            services.AddSingleton<MongoClientSingleton>();
+            services.AddSingleton<IMongoDatabase>(serviceProvider =>
+            {
+                var mongoOptions = serviceProvider.GetService<IOptions<MongoOptions>>();
+                return new MongoClient(mongoOptions.Value.ConnectionString).GetDatabase(mongoOptions.Value.Database);
+            });
             services.AddSingleton<UnitOfWorkFactory>();
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IApplicationStatisticsService, ApplicationStatisticsService>();
@@ -40,7 +45,6 @@ namespace MobileApplicationMonitoringService
             });
             services.AddCors();
             services.AddControllers();
-            services.Configure<MongoOptions>(Configuration.GetSection("MongoOptions"));
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

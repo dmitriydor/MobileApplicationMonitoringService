@@ -10,10 +10,10 @@ namespace MobileApplicationMonitoringService.Application.Data
         private readonly IServiceProvider serviceProvider;
         private readonly IClientSessionHandle session;
 
-        public UnitOfWork(IServiceProvider serviceProvider, MongoClientSingleton mongoClient)
+        public UnitOfWork(IServiceProvider serviceProvider, IMongoClient mongoClient)
         {
             this.serviceProvider = serviceProvider;
-            session = mongoClient.Client.StartSession();
+            session = mongoClient.StartSession();
             session.StartTransaction();
         }
         private static ConstructorInfo GetConstructor<TImplementation>()

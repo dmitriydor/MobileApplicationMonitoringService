@@ -12,9 +12,9 @@ namespace MobileApplicationMonitoringService.Application.Data
         public IMongoCollection<Event> Events => db.GetCollection<Event>("Events");
         public IMongoCollection<EventDescription> EventDescriptions => db.GetCollection<EventDescription>("EventDescriptons");
 
-        public DbContext(MongoClientSingleton mongoClient)
+        public DbContext(IMongoDatabase mongoDatabase)
         {
-            db = mongoClient.Database;
+            db = mongoDatabase;
         }
     }
 }
