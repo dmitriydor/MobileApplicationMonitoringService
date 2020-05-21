@@ -18,3 +18,20 @@ services:
       dockerfile: mongo.Dockerfile
     ports:
       - 27017:27017
+  
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+    restart: always
+  
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhos
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    restart: always
