@@ -8,5 +8,6 @@ namespace MobileApplicationMonitoringService.Application.Models
         public DateTime Date { get; set; }
         public string EventName { get; set; }
         public Guid ApplicationId { get; set; }
+        public bool Criticality { get; set; } = false;
     }
 }

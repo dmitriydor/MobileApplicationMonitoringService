@@ -20,7 +20,8 @@ namespace MobileApplicationMonitoringService.Application.Repositories
         {
             var listEventDescription = (await context.EventDescriptions.Find(_ => true).ToListAsync()).Select(x => x.EventName);
             var list = eventDescriptions.Where(x => !listEventDescription.Contains(x.EventName));
-            await context.EventDescriptions.InsertManyAsync(list);
+            if (list.Count() != 0)
+                await context.EventDescriptions.InsertManyAsync(list);
         }
         public async Task UpdateBatchEventAsync(IEnumerable<EventDescription> eventDescriptions)
         {

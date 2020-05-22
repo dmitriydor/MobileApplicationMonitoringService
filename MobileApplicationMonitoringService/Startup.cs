@@ -26,6 +26,7 @@ namespace MobileApplicationMonitoringService
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<MongoOptions>(Configuration.GetSection("MongoOptions"));
+            services.Configure<KafkaOptions>(Configuration.GetSection("Kafka"));
             services.AddSingleton<IMapper, Mapper>();
             services.AddScoped<IDbContext, DbContext>();
             services.AddSingleton<MigrationRunner>();

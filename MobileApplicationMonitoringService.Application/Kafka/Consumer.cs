@@ -1,6 +1,7 @@
 ﻿using Confluent.Kafka;
 using MobileApplicationMonitoringService.Application.Options;
 using System;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 
 namespace MobileApplicationMonitoringService.Application.Kafka
@@ -8,15 +9,15 @@ namespace MobileApplicationMonitoringService.Application.Kafka
     public class Consumer<TKey, TValue>
     {
         private readonly ConsumerConfig configuration;
-        public delegate Task MessageConsumedDelegate(Message<TKey, TValue> message);
+        
 
         public Consumer(KafkaOptions options)
         {
             configuration = new ConsumerConfig(options.Configuration);
         }
-        public Task Consume(string topic, MessageConsumedDelegate messageConsumedDelegate)
+        public Task Consume(string topic, Action<Message<TKey,TValue>> messageConsumedDelegate)
         {
-            return Task.Run(async () =>
+            return Task.Run(() =>
                {
                    var consumer = new ConsumerBuilder<TKey, TValue>(configuration)
                        .SetValueDeserializer(new JsonDeserializer<TValue>())
@@ -25,10 +26,10 @@ namespace MobileApplicationMonitoringService.Application.Kafka
 
                    while(true)
                    {
-                       ConsumeResult<TKey, TValue> consumed = consumer.Consume(TimeSpan.FromMilliseconds(50));
+                       ConsumeResult<TKey, TValue> consumed = consumer.Consume();
                        if (consumed != null)
                        {
-                           await messageConsumedDelegate.Invoke(consumed.Message);
+                           messageConsumedDelegate.Invoke(consumed.Message);
                            consumer.Commit(consumed);
                        }
                    }

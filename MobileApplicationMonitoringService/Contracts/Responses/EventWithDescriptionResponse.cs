@@ -8,6 +8,7 @@ namespace MobileApplicationMonitoringService.Contracts.Responses
         public DateTime Date { get; set; }
         public string EventName { get; set; }
         public Guid ApplicationId { get; set; }
+        public bool Criticality { get; set; }
         public string Description { get; set; }
     }
 }

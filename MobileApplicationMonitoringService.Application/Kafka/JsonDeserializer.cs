@@ -10,6 +10,8 @@ namespace MobileApplicationMonitoringService.Application.Kafka
     {
         public T Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
         {
+            if (isNull)
+                throw new Exception();
             return JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(data));
         }
     }

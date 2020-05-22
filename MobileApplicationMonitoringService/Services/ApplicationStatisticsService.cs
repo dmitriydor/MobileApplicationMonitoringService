@@ -1,6 +1,9 @@
 ﻿using MapsterMapper;
+using Microsoft.Extensions.Options;
 using MobileApplicationMonitoringService.Application.Data;
+using MobileApplicationMonitoringService.Application.Kafka;
 using MobileApplicationMonitoringService.Application.Models;
+using MobileApplicationMonitoringService.Application.Options;
 using MobileApplicationMonitoringService.Application.Repositories;
 using MobileApplicationMonitoringService.Contracts.Requests;
 using MobileApplicationMonitoringService.Contracts.Responses;
@@ -15,10 +18,12 @@ namespace MobileApplicationMonitoringService.Services
     {
         private readonly IMapper mapper;
         private readonly UnitOfWorkFactory unitOfWorkFactory;
-        public ApplicationStatisticsService(IMapper mapper, UnitOfWorkFactory unitOfWorkFactory)
+        private readonly Producer producer;
+        public ApplicationStatisticsService(IMapper mapper, UnitOfWorkFactory unitOfWorkFactory, IOptions<KafkaOptions> kafkaOptions)
         {
             this.mapper = mapper;
             this.unitOfWorkFactory = unitOfWorkFactory;
+            producer = new Producer(kafkaOptions.Value);
         }
         public async Task SaveApplicationStatisticsAsync(SaveApplicationStatisticsRequest request)
         {
@@ -50,6 +55,20 @@ namespace MobileApplicationMonitoringService.Services
                 await eventRepository.CreateBatchAsync(applicationEvents);
             }
             uow.Commit();
+            var messages = new List<Message>();
+            applicationEvents.ForEach(e =>
+            {
+                if (e.Criticality)
+                    messages.Add(new Message
+                    {
+                        EventName = e.EventName,
+                        Date = e.Date,
+                        UserName = applicationData.UserName,
+                        AppVersion = applicationData.AppVersion,
+                        EventDescription = eventDescriptionsRepository.GetByEventNameAsync(e.EventName).Result.Description
+                    });
+            });
+            await producer.Produce(messages.ToArray(), "notification");
         }
         public async Task DeleteApplicationStatisticsAsync(Guid id)
         {

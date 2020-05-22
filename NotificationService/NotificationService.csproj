@@ -8,7 +8,12 @@
   <ItemGroup>
     <PackageReference Include="Confluent.Kafka" Version="1.4.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MobileApplicationMonitoringService.Application\MobileApplicationMonitoringService.Application.csproj" />
   </ItemGroup>
 
 </Project>
