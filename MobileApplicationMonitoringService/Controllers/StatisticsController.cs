@@ -26,6 +26,7 @@ namespace MobileApplicationMonitoringService.Controllers
         public async Task Post([FromBody] SaveApplicationStatisticsRequest createRequest)
         {
             await statisticService.SaveApplicationStatisticsAsync(createRequest);
+            await statisticService.SendindNotificatins(createRequest);
             logger.Debug("A request to create data about {@ApplicationStatistics}", createRequest);
         }
 

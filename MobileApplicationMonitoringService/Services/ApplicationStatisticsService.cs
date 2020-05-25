@@ -55,20 +55,6 @@ namespace MobileApplicationMonitoringService.Services
                 await eventRepository.CreateBatchAsync(applicationEvents);
             }
             uow.Commit();
-            var messages = new List<Message>();
-            applicationEvents.ForEach(e =>
-            {
-                if (e.Criticality)
-                    messages.Add(new Message
-                    {
-                        EventName = e.EventName,
-                        Date = e.Date,
-                        UserName = applicationData.UserName,
-                        AppVersion = applicationData.AppVersion,
-                        EventDescription = eventDescriptionsRepository.GetByEventNameAsync(e.EventName).Result.Description
-                    });
-            });
-            await producer.Produce(messages.ToArray(), "notification");
         }
         public async Task DeleteApplicationStatisticsAsync(Guid id)
         {
@@ -116,6 +102,28 @@ namespace MobileApplicationMonitoringService.Services
             var eventRepository = uow.GetRepository<EventsRepository>();
             await eventRepository.DeleteAllForAsync(id);
             uow.Commit();
+        }
+        public async Task SendindNotificatins(SaveApplicationStatisticsRequest request)
+        {
+            using var uow = unitOfWorkFactory.CreateUnitOfWork();
+            var eventDescriptionsRepository = uow.GetRepository<EventDescriptionsRepository>();
+            ApplicationData applicationData = mapper.Map<ApplicationData>(request);
+            List<Event> applicationEvents = mapper.Map<List<Event>>(request.Events);
+            var messages = new List<Message>();
+            applicationEvents.ForEach(e =>
+            {
+                if (e.Criticality)
+                    messages.Add(new Message
+                    {
+                        EventName = e.EventName,
+                        Date = e.Date,
+                        UserName = applicationData.UserName,
+                        AppVersion = applicationData.AppVersion,
+                        EventDescription = eventDescriptionsRepository.GetByEventNameAsync(e.EventName).Result.Description
+                    });
+            });
+            uow.Commit();
+            await producer.Produce(messages.ToArray(), "notification");
         }
     }
 }
