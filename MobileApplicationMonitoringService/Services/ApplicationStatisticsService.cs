@@ -25,14 +25,9 @@ namespace MobileApplicationMonitoringService.Services
             this.unitOfWorkFactory = unitOfWorkFactory;
             producer = new Producer(kafkaOptions.Value);
         }
-        public async Task SaveApplicationStatisticsAsync(SaveApplicationStatisticsRequest request)
+        private async Task SaveEventDescriptins(UnitOfWork unitOfWork, SaveApplicationStatisticsRequest request)
         {
-            using var uow = unitOfWorkFactory.CreateUnitOfWork();
-
-            var applicationRepository = uow.GetRepository<ApplicationsRepository>();
-            var eventRepository = uow.GetRepository<EventsRepository>();
-            var eventDescriptionsRepository = uow.GetRepository<EventDescriptionsRepository>();
-
+            var eventDescriptionsRepository = unitOfWork.GetRepository<EventDescriptionsRepository>();
             var eventNames = mapper.Map<List<EventDescription>>(request.Events).Select(x=>x.EventName).Distinct();
             if (eventNames != null)
             {
@@ -43,17 +38,32 @@ namespace MobileApplicationMonitoringService.Services
                 }
                 await eventDescriptionsRepository.AddBatchEventAsync(eventDescriptions);
             }
+        }
+        private async Task SaveApplication(UnitOfWork unitOfWork, SaveApplicationStatisticsRequest request)
+        {
+            var applicationRepository = unitOfWork.GetRepository<ApplicationsRepository>();
             var applicationData = mapper.Map<ApplicationData>(request);
             if (applicationData != null)
             {
                 await applicationRepository.UpsertAsync(applicationData);
             }
+        }
+        private async Task SaveEvents(UnitOfWork unitOfWork, SaveApplicationStatisticsRequest request)
+        {
+            var eventRepository = unitOfWork.GetRepository<EventsRepository>();
             List<Event> applicationEvents = mapper.Map<List<Event>>(request.Events);
             if (applicationEvents != null)
             {
-                applicationEvents.ForEach(e => e.ApplicationId = applicationData.Id);
+                applicationEvents.ForEach(e => e.ApplicationId = request.Id);
                 await eventRepository.CreateBatchAsync(applicationEvents);
             }
+        }
+        public async Task SaveApplicationStatisticsAsync(SaveApplicationStatisticsRequest request)
+        {
+            using var uow = unitOfWorkFactory.CreateUnitOfWork();
+            await SaveEventDescriptins(uow, request);
+            await SaveApplication(uow, request);
+            await SaveEvents(uow, request);
             uow.Commit();
         }
         public async Task DeleteApplicationStatisticsAsync(Guid id)
